@@ -15,12 +15,16 @@ public class Paddle {
     }
 
     public void draw(Graphics g) {
-        g.drawImage(Assets.paddle, x, y, width, height, null);
+        // Sử dụng paddleNormal để đảm bảo luôn hiện ra
+        g.drawImage(Assets.paddleNormal, x, y, width, height, null);
     }
 
     public Rectangle getRect() {
         return new Rectangle(x, y, width, height);
     }
 
-    
+    public void reset(int i) {
+        // Nếu cần reset vị trí paddle, thêm code ở đây
+        // Hiện tại để trống
+    }
 }
