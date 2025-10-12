@@ -8,8 +8,8 @@ public class Brick {
     public static final int STRONG = 2;
     public static final int UNBREAKABLE = 3;
 
-    private int x, y, width, height;
-    private int type;
+    private final int x, y, width, height;
+    private final int type;
     private int hitPoints;
     private boolean destroyed;
 
@@ -41,7 +41,6 @@ public class Brick {
     public int getHeight() { return height; }
     public boolean isDestroyed() { return destroyed; }
     public int getType() { return type; }
-    public int getHitPoints() { return hitPoints; }
 
     // Khi bóng chạm
     public void hit(ArrayList<Brick> bricks) {

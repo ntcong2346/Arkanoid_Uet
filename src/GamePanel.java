@@ -59,9 +59,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
             // ball vs walls
             if (ball.getX() <= 0 || ball.getX() + ball.getDiameter() >= WIDTH)
-                ball.setDX(ball.getDX() * -1);
+                ball.bounceHorizontal();
             if (ball.getY() <= 0)
-                ball.setDY(ball.getDY() * -1);
+                ball.bounceVertical();
 
             // ball vs paddle
             if (ball.getRect().intersects(paddle.getRect())) {

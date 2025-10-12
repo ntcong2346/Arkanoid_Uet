@@ -3,9 +3,9 @@ import java.util.Random;
 
 public class Ball {
     private double x, y; //Position of ball
-    private double dx, dy; //Speed & direction by axis of ball
-    private int radius;
-    private int speed;
+    private Velocity velocity; //Speed & direction by axis of ball
+    private final int radius;
+    private final int speed;
     private boolean inMotion; //Is ball flying?
 
     public double getX() { return x; }
@@ -13,16 +13,14 @@ public class Ball {
     public void setX(double x) { this.x = x; }
     public void setY(double y) { this.y = y; }
 
-    public double getDX() { return dx; }
-    public double getDY() { return dy; }
-    public void setDX(double dx) { this.dx = dx; }
-    public void setDY(double dy) { this.dy = dy; }
+    public double getDX() { return velocity.getDx(); }
+    public double getDY() { return velocity.getDy(); }
+    public void setDX(double dx) { velocity.setDx(dx); }
+    public void setDY(double dy) { velocity.setDy(dy); }
 
     public int getRadius() { return radius; }
     public int getDiameter() { return radius * 2; }
-    public int getSpeed() { return speed; }
-    public void setSpeed(int speed) { this.speed = speed; }
-
+    public int getSpeed() { return (int) velocity.getSpeed(); }
     public boolean isInMotion() { return inMotion; }
 
     public Ball(int x, int y, int r, int speed) {
@@ -30,8 +28,7 @@ public class Ball {
         this.y = y;
         this.radius = r;
         this.speed = speed; // Gán giá trị speed từ tham số
-        this.dx = 0;
-        this.dy = 0;
+        this.velocity = new Velocity(0, 0);
         this.inMotion = false;
     }
 
@@ -39,16 +36,26 @@ public class Ball {
         Random rand = new Random();
         if (!inMotion) {
             inMotion = true;
-            dx = rand.nextBoolean() ? speed : -speed;
-            dy = -speed; // bay len
+            double dx = rand.nextBoolean() ? 1 : -1;
+            double dy = -1; // bay len
+            velocity = new Velocity(dx, dy);
+            velocity.normalize(speed);
         }
     }
 
     public void move() {
         if (inMotion) {
-            x += dx;
-            y += dy;
+            x += velocity.getDx();
+            y += velocity.getDy();
         }
+    }
+
+    public void bounceHorizontal() {
+        velocity.invertX();
+    }
+
+    public void bounceVertical() {
+        velocity.invertY();
     }
 
     public void draw(Graphics g) {
@@ -74,8 +81,7 @@ public class Ball {
     public void reset(int nx, int ny) {
         x = nx;
         y = ny;
-        dx = 0;
-        dy = 0;
+        velocity = new Velocity(0, 0);
         inMotion = false;
     }
 }
