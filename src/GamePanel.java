@@ -37,9 +37,12 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         lives = 3;
         win = false;
         gameOver = false;
-        paddle = new Paddle(WIDTH / 2 - 60, HEIGHT - 50, 120, 15);
+
+        paddle = new Paddle(WIDTH / 2.0 - 60, HEIGHT - 50, 120, 15, MenuPanel.paddleSpeed);
         paddle.setSpeed(MenuPanel.paddleSpeed);
-        ball = new Ball(WIDTH / 2, HEIGHT - 70, MenuPanel.ballSize, MenuPanel.ballSpeed);
+
+        ball = new Ball(WIDTH / 2.0, HEIGHT - 70, MenuPanel.ballSize, MenuPanel.ballSpeed);
+
         bricks = new ArrayList<>();
         createLevel(level);
         collisionInfo = new CollisionInfo(ball, paddle, bricks);
@@ -65,14 +68,14 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
             paddle.updateGlow(); // Cập nhật hiệu ứng mỗi frame
             
-            // ball out of bounds
+            // Ball out of bounds
             if (ball.getY() > HEIGHT) {
                 lives--;
                 if (lives <= 0) {
                     gameOver = true;
                 } else {
                     // reset ball position in the paddle
-                    ball.reset(paddle.getX() + paddle.getWidth() / 2, paddle.getY() - ball.getRadius() - 1);
+                    ball.reset((int)paddle.getX() + paddle.getWidth() / 2, (int)paddle.getY() - ball.getRadius() - 1);
                 }
             }
 
@@ -91,8 +94,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                     win = true;
                 } else {
                     createLevel(level);
-                    ball.reset(paddle.getX() + paddle.getWidth() / 2,
-                            paddle.getY() - ball.getRadius() - 1);
+                    ball.reset((int)paddle.getX() + paddle.getWidth() / 2,
+                            (int)paddle.getY() - ball.getRadius() - 1);
                 }
             }
         }
@@ -103,12 +106,13 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         g.drawImage(Assets.background, 0, 0, WIDTH, HEIGHT, null);
-        paddle.draw(g);
-        ball.draw(g);
+
+        paddle.render(g);
+        ball.render(g);
 
         for (Brick b : bricks) {
             if (!b.isDestroyed())
-                b.draw(g);
+                b.render(g);
         }
 
         g.setColor(Color.WHITE);
@@ -158,7 +162,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             if (level > 5)
                 level = 1;
             createLevel(level);
-            ball.reset(paddle.getX() + paddle.getWidth() / 2, paddle.getY() - ball.getRadius() - 1);
+            ball.reset(paddle.getX() + paddle.getWidth() / 2.0, paddle.getY() - ball.getRadius() - 1);
         }
     }
 

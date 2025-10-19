@@ -1,46 +1,24 @@
 import java.awt.*;
 import java.awt.event.KeyEvent;
 
-public class Paddle {
-    private int x, y; //Paddle location on screen
-    private int width, height; //Paddle size
+public class Paddle extends MovableObject {
     private int speed; //Overall speed
-
     private boolean glowing;
     private int glowTimer;// số frame phát sáng (~0.15s nếu 100fps)
 
     private boolean leftPressed;
     private boolean rightPressed;
 
-    public Paddle(int x, int y, int w, int h) {
-        this.x = x;
-        this.y = y;
-        this.width = w;
-        this.height = h;
-        this.speed = 6;
-        this.glowing = true;
+    public Paddle(double x, double y, int width, int height, int speed) {
+        super(x, y, width, height);
+        this.speed = speed;
+        this.glowing = false;
         this.glowTimer = 0;
         this.leftPressed = false;
         this.rightPressed = false;
     }
 
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public int getSpeed() {
+    public double getSpeed() {
         return speed;
     }
 
@@ -93,22 +71,26 @@ public class Paddle {
         return rightPressed;
     }
 
-    public void draw(Graphics g) {
+    @Override
+    public void update() {
+        updateGlow();
+    }
+
+    @Override
+    public void render(Graphics g) {
         if (glowing) {
-            g.drawImage(Assets.paddleGlow, x, y, width, height, null);
+            g.drawImage(Assets.paddleGlow, (int)x, (int)y, width, height, null);
         } else {
-            g.drawImage(Assets.paddleNormal, x, y, width, height, null);
+            g.drawImage(Assets.paddleNormal, (int)x, (int)y, width, height, null);
         }
     }
 
     public Rectangle getRect() {
-        return new Rectangle(x, y, width, height);
+        return new Rectangle((int)x, (int)y, width, height);
     }
 
-    public void reset(int nx, int ny) {
+    public void reset(double nx, double ny) {
         // Nếu cần reset vị trí paddle, thêm code ở đây
-        x = nx;
-        y = ny;
         // Hiện tại để trống
     }
 }

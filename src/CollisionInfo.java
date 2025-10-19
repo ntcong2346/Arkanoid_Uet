@@ -65,34 +65,24 @@ public class CollisionInfo {
      * Ball & brick collision
      */
     private int handleBrickCollision() {
-        Rectangle nextBallRect = new Rectangle(
-                (int) Math.round(ball.getX() + ball.getDX() - ball.getRadius()),
-                (int) Math.round(ball.getY() + ball.getDY() - ball.getRadius()),
-                ball.getDiameter(),
-                ball.getDiameter()
-        );
+        for (Brick brick : bricks) {
+            if (!brick.isDestroyed() && ball.getRect().intersects(brick.getRect())) {
+                Rectangle ballRect = ball.getRect();
+                Rectangle brickRect = brick.getRect();
 
-        for (Brick b : bricks) {
-            if (!b.isDestroyed() && nextBallRect.intersects(b.getRect())) {
-                Rectangle brickRect = b.getRect();
+                // Xác định vùng va chạm
+                Rectangle intersectZone = brickRect.intersection(ballRect);
 
-                // Xác định hướng va chạm
-                boolean hitFromLeft = ball.getX() + ball.getDiameter() <= brickRect.x && ball.getX() + ball.getDiameter() + ball.getDX() > brickRect.x;
-                boolean hitFromRight = ball.getX() >= brickRect.x + brickRect.width && ball.getX() + ball.getDX() < brickRect.x + brickRect.width;
-                boolean hitFromTop = ball.getY() + ball.getDiameter() <= brickRect.y && ball.getY() + ball.getDiameter() + ball.getDY() > brickRect.y;
-                boolean hitFromBottom = ball.getY() >= brickRect.y + brickRect.height && ball.getY() + ball.getDY() < brickRect.y + brickRect.height;
-
-                // Đảo chiều vận tốc phù hợp
-                if (hitFromLeft || hitFromRight) {
-                    ball.bounceHorizontal();
-                } else if (hitFromTop || hitFromBottom) {
+                if (intersectZone.width >= intersectZone.height) {
+                    // Chiều rộng vùng va chạm > chiều cao => va chạm vào phần trên/dưới gạch => bật lại dọc
                     ball.bounceVertical();
                 } else {
-                    // Nếu không xác định được, đảo cả hai
+                    // Chiều rộng vùng va chạm < chiều cao => va chạm vàp phần trái/phải gạch => bật lại ngang
                     ball.bounceHorizontal();
-                    ball.bounceVertical();
                 }
-                return b.hit(bricks);
+                // Dịch chuyển quá bóng ra khỏi gạch 1 ít để tránh bị kẹt
+                ball.move();
+                return brick.takeHit(bricks);
             }
         }
         return 0;

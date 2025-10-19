@@ -38,8 +38,8 @@ public class CoopGamePanel extends JPanel implements ActionListener, KeyListener
         win = false;
         gameOver = false;
         level = 1;
-        paddle2 = new Paddle(WIDTH / 4 - 60, HEIGHT - 50, 120, 15);
-        paddle1 = new Paddle(WIDTH * 3 / 4 - 60, HEIGHT - 50, 120, 15);
+        paddle2 = new Paddle(WIDTH / 4.0 - 60.0, HEIGHT - 50, 120, 15, MenuPanel.paddleSpeed);
+        paddle1 = new Paddle(WIDTH * 3 / 4.0 - 60.0, HEIGHT - 50, 120, 15, MenuPanel.paddleSpeed);
         paddle1.setSpeed(MenuPanel.paddleSpeed);
         paddle2.setSpeed(MenuPanel.paddleSpeed);
         ball = new Ball(0, 0, MenuPanel.ballSize, MenuPanel.ballSpeed);
@@ -110,12 +110,12 @@ public class CoopGamePanel extends JPanel implements ActionListener, KeyListener
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         g.drawImage(Assets.background, 0, 0, WIDTH, HEIGHT, null);
-        paddle1.draw(g);
-        paddle2.draw(g);
-        ball.draw(g);
+        paddle1.render(g);
+        paddle2.render(g);
+        ball.render(g);
 
         for (Brick b : bricks) {
-            if (!b.isDestroyed()) b.draw(g);
+            if (!b.isDestroyed()) b.render(g);
         }
 
         g.setColor(Color.WHITE);
@@ -161,7 +161,7 @@ public class CoopGamePanel extends JPanel implements ActionListener, KeyListener
             if (level > 5)
                 level = 1;
             createLevel(level);
-            ball.reset(paddle1.getX() + paddle1.getWidth() / 2 - ball.getDiameter() / 2, paddle1.getY() - ball.getDiameter() - 2);
+            ball.reset(paddle1.getX() + paddle1.getWidth() / 2.0 - ball.getDiameter() / 2.0, paddle1.getY() - ball.getDiameter() - 2);
         }
     }
 
