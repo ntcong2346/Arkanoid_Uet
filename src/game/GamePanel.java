@@ -6,11 +6,14 @@ import graphics.Assets;
 import entity.Ball;
 import entity.Paddle;
 import entity.Brick;
+import powerup.PowerUp;
+import powerup.PowerUpManager;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.List;
 
 public class GamePanel extends JPanel implements ActionListener, KeyListener {
     public static final int WIDTH = 800;
@@ -21,6 +24,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     private Ball ball;
     private ArrayList<Brick> bricks;
     private CollisionInfo collisionInfo;
+
+    /** List of active power-ups falling from destroyed bricks. */
+    private final List<PowerUp> powerUps = new ArrayList<>();
 
     private boolean leftPressed = false, rightPressed = false;
     private int score = 0, lives = 3;
@@ -38,6 +44,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
         timer = new Timer(10, this); // 100 fps
         timer.start();
+        PowerUpManager.setSinglePanel(this);
     }
 
     private void initGame() {
@@ -75,7 +82,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             // Collision detection & handler for ball, brick, paddle (add score based on collision)
             score += collisionInfo.updateCollision();
 
-            paddle.updateGlow(); // Cập nhật hiệu ứng mỗi frame
+            paddle.updateGlow();// Cập nhật hiệu ứng mỗi frame
+            updatePowerUps();
             
             // Ball out of bounds
             if (ball.getY() > HEIGHT) {
@@ -124,6 +132,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 b.render(g);
         }
 
+        renderPowerUps(g);
+
         g.setColor(Color.WHITE);
         g.setFont(new Font("Arial", Font.PLAIN, 18));
         g.drawString("Score: " + score, 10, 20);
@@ -168,6 +178,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         }
         if (k == KeyEvent.VK_S) { // Change levels
             level++;
+            score = 0;
             if (level > 5)
                 level = 1;
             createLevel(level);
@@ -186,6 +197,44 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
     @Override
     public void keyTyped(KeyEvent e) {}
+
+    /**
+     * Adds a power-up to the active power-ups list.
+     *
+     * @param powerUp the power-up to add
+     */
+    public void addPowerUp(PowerUp powerUp) {
+        if (powerUp != null) {
+            powerUps.add(powerUp);
+        }
+    }
+
+    /**
+     * Updates all active power-ups: movement, collision detection, and removal.
+     */
+    private void updatePowerUps() {
+        for (int i = powerUps.size() - 1; i >= 0; i--) {
+            PowerUp powerUp = powerUps.get(i);
+            powerUp.update();
+
+            if (powerUp.getBounds().intersects(paddle.getBounds())) {
+                powerUp.applyEffect(paddle);
+                powerUps.remove(i);
+            } else if (!powerUp.isActive()) {
+                powerUps.remove(i);
+            }
+        }
+    }
+
+    private void renderPowerUps(Graphics g) {
+        for (PowerUp powerUp : powerUps) {
+            powerUp.render(g);
+        }
+    }
+
+    public void addLife(int amount) {
+        lives += amount;
+    }
 
     private void createLevel(int lvl) {
         bricks.clear();

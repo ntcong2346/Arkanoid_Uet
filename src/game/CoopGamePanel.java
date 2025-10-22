@@ -6,11 +6,14 @@ import graphics.Assets;
 import entity.Ball;
 import entity.Paddle;
 import entity.Brick;
+import powerup.PowerUp;
+import powerup.PowerUpManager;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.List;
 
 public class CoopGamePanel extends JPanel implements ActionListener, KeyListener {
     public static final int WIDTH = 800;
@@ -22,6 +25,10 @@ public class CoopGamePanel extends JPanel implements ActionListener, KeyListener
     private int paddleLaunchIndex = 0; // 0: paddle1, 1: paddle2
     private ArrayList<Brick> bricks;
     private CollisionInfo collisionInfo;
+
+    /** List of active power-ups falling from destroyed bricks. */
+    private final List<PowerUp> powerUps = new ArrayList<>();
+
     private boolean leftPressed = false, rightPressed = false;
     private boolean aPressed = false, dPressed = false;
     private int score = 0, lives = 3;
@@ -39,6 +46,7 @@ public class CoopGamePanel extends JPanel implements ActionListener, KeyListener
 
         timer = new Timer(10, this);
         timer.start();
+        PowerUpManager.setCoopPanel(this);
     }
 
     private void initGame() {
@@ -69,6 +77,7 @@ public class CoopGamePanel extends JPanel implements ActionListener, KeyListener
 
             paddle1.updateGlow();
             paddle2.updateGlow();
+            updatePowerUps();
 
             // Ball follows paddle before launch
             if (ball.isInMotion()) {
@@ -128,6 +137,8 @@ public class CoopGamePanel extends JPanel implements ActionListener, KeyListener
             if (!b.isDestroyed()) b.render(g);
         }
 
+        renderPowerUps(g);
+
         g.setColor(Color.WHITE);
         g.setFont(new Font("Arial", Font.PLAIN, 18));
         g.drawString("Score: " + score, 10, 20);
@@ -168,6 +179,7 @@ public class CoopGamePanel extends JPanel implements ActionListener, KeyListener
         if (k == KeyEvent.VK_R && gameOver) initGame();
         if (k == KeyEvent.VK_S) { // Cheat: chuyển vòng
             level++;
+            score = 0;
             if (level > 5)
                 level = 1;
             createLevel(level);
@@ -185,6 +197,64 @@ public class CoopGamePanel extends JPanel implements ActionListener, KeyListener
     }
     @Override
     public void keyTyped(KeyEvent e) {}
+
+    /**
+     * Adds a power-up to the active power-ups list.
+     *
+     * @param powerUp the power-up to add
+     */
+    public void addPowerUp(PowerUp powerUp) {
+        if (powerUp != null) {
+            powerUps.add(powerUp);
+        }
+    }
+
+    public void addLife(int amount) {
+        lives += amount;
+    }
+
+    /**
+     * Updates all active power-ups and handles paddle collisions.
+     */
+    private void updatePowerUps() {
+        for (int i = powerUps.size() - 1; i >= 0; i--) {
+            PowerUp powerUp = powerUps.get(i);
+            powerUp.update();
+
+            Paddle hitPaddle = getHitPaddle(powerUp);
+            if (hitPaddle != null) {
+                powerUp.applyEffect(hitPaddle);
+                powerUps.remove(i);
+                continue;
+            }
+
+            if (!powerUp.isActive()) {
+                powerUps.remove(i);
+            }
+        }
+    }
+
+    private void renderPowerUps(Graphics g) {
+        for (PowerUp powerUp : powerUps) {
+            powerUp.render(g);
+        }
+    }
+
+    /**
+     * Returns the paddle that the power-up collided with, or null if none.
+     *
+     * @param powerUp the power-up to check
+     * @return the hit paddle, or null
+     */
+    private Paddle getHitPaddle(PowerUp powerUp) {
+        if (powerUp.getBounds().intersects(paddle1.getBounds())) {
+            return paddle1;
+        }
+        if (powerUp.getBounds().intersects(paddle2.getBounds())) {
+            return paddle2;
+        }
+        return null;
+    }
 
     private void createLevel(int lvl) {
         bricks.clear();

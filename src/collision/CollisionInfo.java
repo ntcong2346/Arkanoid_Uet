@@ -4,6 +4,9 @@ import entity.Ball;
 import entity.Paddle;
 import entity.Brick;
 import game.GamePanel;
+import powerup.PowerUp;
+import powerup.PowerUpFactory;
+import powerup.PowerUpManager;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -12,6 +15,12 @@ public class CollisionInfo {
     private Ball ball;
     private Paddle paddle;
     private ArrayList<Brick> bricks;
+
+    /** Probability of power-up drop (70%). */
+    private static final double DROP_PROBABILITY = 0.7;
+
+    /** Offset from brick center for power-up spawn. */
+    private static final int POWER_UP_OFFSET = 12;
 
     public CollisionInfo(Ball ball, Paddle paddle, ArrayList<Brick> bricks) {
         this.ball = ball;
@@ -89,9 +98,50 @@ public class CollisionInfo {
                 }
                 // Dịch chuyển quá bóng ra khỏi gạch 1 ít để tránh bị kẹt
                 ball.move();
+                dropPowerUpFromBrick(brick);
                 return brick.takeHit(bricks);
             }
         }
         return 0;
+    }
+
+    /**
+     * Drops a power-up from a destroyed brick with 70% probability.
+     *
+     * @param brick the destroyed brick
+     */
+    private void dropPowerUpFromBrick(Brick brick) {
+        if (shouldDropPowerUp()) {
+            PowerUp powerUp = PowerUpFactory.createRandom(
+                    calculatePowerUpX(brick),
+                    calculatePowerUpY(brick)
+            );
+            if (powerUp != null) {
+                PowerUpManager.addPowerUp(powerUp);
+            }
+        }
+    }
+
+    /**
+     * Determines if a power-up should drop (70% chance).
+     *
+     * @return true if power-up should drop
+     */
+    private static final boolean shouldDropPowerUp() {
+        return Math.random() < DROP_PROBABILITY;
+    }
+
+    /**
+     * Calculates X position for power-up (brick center - 12px).
+     */
+    private static int calculatePowerUpX(Brick brick) {
+        return (int) brick.getX() + brick.getWidth() / 2 - POWER_UP_OFFSET;
+    }
+
+    /**
+     * Calculates Y position for power-up (brick center - 12px).
+     */
+    private static int calculatePowerUpY(Brick brick) {
+        return (int) brick.getY() + brick.getHeight() / 2 - POWER_UP_OFFSET;
     }
 }
