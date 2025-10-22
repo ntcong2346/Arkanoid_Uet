@@ -33,10 +33,10 @@ public class Brick extends GameObject {
                 hitPoints = 1;
                 break;
             case STRONG:
-                hitPoints = 3; // cần 3 lần
+                hitPoints = 3; // Cần 3 lần
                 break;
             case UNBREAKABLE:
-                hitPoints = Integer.MAX_VALUE; // không bao giờ vỡ
+                hitPoints = Integer.MAX_VALUE; // Không bao giờ vỡ
                 break;
         }
     }
