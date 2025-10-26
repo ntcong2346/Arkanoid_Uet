@@ -1,5 +1,8 @@
 package entity;
 
+import powerup.PowerUp;
+import powerup.PowerUpFactory;
+import powerup.PowerUpManager;
 import graphics.Assets;
 
 import java.awt.*;
@@ -71,6 +74,9 @@ public class Brick extends GameObject {
                 // Add score from all bricks destroyed in the explosion zone
                 totalScore += explode(bricks);
             }
+            // GỌI HÀM THẢ POWER-UP KHI CHẮC CHẮN GẠCH BỊ PHÁ HỦY
+            dropPowerUp();
+
             return totalScore;
         }
         return 0;
@@ -124,6 +130,20 @@ public class Brick extends GameObject {
             case UNBREAKABLE:
                 g.drawImage(Assets.brickUnbreakable, drawX, drawY, width, height, null);
                 break;
+        }
+    }
+
+    /**
+     * Drops a power-up from this destroyed brick with a 50% chance.
+     */
+    private void dropPowerUp() {
+        if (Math.random() < 0.5) { // 50% chance to drop
+            // Tính toán vị trí của Power-up (tâm gạch - 12px offset cho kích thước)
+            int powerUpX = (int) this.x - 12;
+            int powerUpY = (int) this.y - 12;
+
+            PowerUp powerUp = PowerUpFactory.createRandom(powerUpX, powerUpY);
+            PowerUpManager.addPowerUp(powerUp);
         }
     }
 }

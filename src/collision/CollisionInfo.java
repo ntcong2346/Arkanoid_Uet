@@ -92,48 +92,9 @@ public class CollisionInfo {
                 }
                 // Dịch chuyển quá bóng ra khỏi gạch 1 ít để tránh bị kẹt
                 ball.move();
-                dropPowerUpFromBrick(brick);
                 return brick.takeHit(bricks);
             }
         }
         return 0;
-    }
-
-    /**
-     * Drops a power-up from a destroyed brick.
-     *
-     * @param brick the destroyed brick
-     */
-    private void dropPowerUpFromBrick(Brick brick) {
-        if (shouldDropPowerUp()) {
-            PowerUp powerUp = PowerUpFactory.createRandom(
-                    calculatePowerUpX(brick),
-                    calculatePowerUpY(brick)
-            );
-            PowerUpManager.addPowerUp(powerUp);
-        }
-    }
-
-    /**
-     * Determines if a power-up should drop.
-     *
-     * @return true if power-up should drop
-     */
-    private static boolean shouldDropPowerUp() {
-        return Math.random() < 0.5;
-    }
-
-    /**
-     * Calculates X position for power-up (brick center - 12px).
-     */
-    private static int calculatePowerUpX(Brick brick) {
-        return (int) brick.getX() + brick.getWidth() / 2 - 12;
-    }
-
-    /**
-     * Calculates Y position for power-up (brick center - 12px).
-     */
-    private static int calculatePowerUpY(Brick brick) {
-        return (int) brick.getY() + brick.getHeight() / 2 - 12;
     }
 }
