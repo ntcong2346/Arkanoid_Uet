@@ -1,11 +1,8 @@
 package graphics;
-<<<<<<< HEAD
 import menu.MenuPanel;
-=======
 
 import menu.MenuPanel;
 
->>>>>>> c291f9b6cab3a4440a04be7927bf0555653de540
 import javax.imageio.ImageIO;
 import javax.sound.sampled.*;
 import java.awt.*;
