@@ -1,3 +1,7 @@
+import game.CoopGamePanel;
+import game.GameFrame;
+import game.GamePanel;
+
 import javax.swing.*;
 import java.awt.*;
 
