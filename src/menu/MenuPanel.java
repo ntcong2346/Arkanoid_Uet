@@ -1,5 +1,4 @@
 package menu;
-
 import game.GameFrame;
 import game.CoopGamePanel;
 import game.GamePanel;
@@ -8,8 +7,8 @@ import javax.swing.*;
 import java.awt.*;
 
 public class MenuPanel extends JPanel {
-    private JCheckBox soundCheck;
-    private JComboBox<String> ballSpeedBox;
+    public JCheckBox soundCheck;
+    private final JComboBox<String> ballSpeedBox;
     private JComboBox<String> ballSizeBox;
     private JComboBox<String> paddleSpeedBox;
     private JComboBox<String> modeBox;
@@ -32,7 +31,7 @@ public class MenuPanel extends JPanel {
         add(title, gbc);
 
         gbc.gridy++;
-        soundCheck = new JCheckBox("Bật tiếng", true);
+        soundCheck = new JCheckBox("Sound on", true);
         add(soundCheck, gbc);
 
         gbc.gridy++;
@@ -95,7 +94,7 @@ public class MenuPanel extends JPanel {
         soundCheck.addActionListener(e -> {
             boolean isSelected = soundCheck.isSelected();
             System.out.println("Sound toggled: " + isSelected);
-            Assets.toggleSound(isSelected);
         });
+
     }
 }

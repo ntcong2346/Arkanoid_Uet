@@ -1,6 +1,10 @@
 import javax.swing.*;
 import java.awt.*;
 
+import game.CoopGamePanel;
+import game.GameFrame;
+import game.GamePanel;
+
 public class MenuPanel extends JPanel {
     private JCheckBox soundCheck;
     private JComboBox<String> ballSpeedBox;
