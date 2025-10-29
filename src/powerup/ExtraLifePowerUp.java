@@ -21,7 +21,7 @@ public class ExtraLifePowerUp extends PowerUp {
      * @param y y-coordinate
      */
     public ExtraLifePowerUp(int x, int y) {
-        super(x, y, 25, 25, TYPE, 0);
+        super(x, y, 100, 100, TYPE, 0);
     }
 
     /**
@@ -41,11 +41,6 @@ public class ExtraLifePowerUp extends PowerUp {
 
     @Override
     public void render(Graphics g) {
-        g.setColor(Color.RED);
-        g.fillOval((int) x, (int) y, width, height);
-        g.setColor(Color.WHITE);
-        int symbolWidth = 7;  // Ước lượng chiều rộng "♥"
-        int centerX = (int) x + (width - symbolWidth) / 2;  // Căn giữa
-        g.drawString("♥", centerX, (int) y + 16);
+        g.drawImage(graphics.Assets.extraLifePowerUp, (int) x, (int) y, width, height, null);
     }
 }

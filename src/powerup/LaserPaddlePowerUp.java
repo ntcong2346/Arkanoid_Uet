@@ -1,6 +1,7 @@
 package powerup;
 
 import entity.Paddle;
+import graphics.Assets;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -21,7 +22,7 @@ public class LaserPaddlePowerUp extends PowerUp {
     private Timer shootTimer;
 
     public LaserPaddlePowerUp(int x, int y) {
-        super(x, y, 25, 25, TYPE, DURATION_MS);
+        super(x, y, 100, 100, TYPE, DURATION_MS);
         this.shootTimer = null;
     }
 
@@ -42,14 +43,7 @@ public class LaserPaddlePowerUp extends PowerUp {
 
     @Override
     public void render(Graphics g) {
-        g.setColor(Color.WHITE);
-        g.drawRect((int) x - 1, (int) y - 1, width + 1, height + 1);
-        g.setColor(Color.RED);
-        g.fillRect((int) x, (int) y, width, height);
-        g.setColor(Color.YELLOW);
-        int symbolWidth = 5;  // Ước lượng chiều rộng "⚡"
-        int centerX = (int) x + (width - symbolWidth) / 2;  // Căn giữa
-        g.drawString("⚡", centerX, (int) y + 16);
+        g.drawImage(Assets.laserPowerUp, (int) x, (int) y, width, height, null);
     }
 
     private void startContinuousShooting(Paddle paddle) {

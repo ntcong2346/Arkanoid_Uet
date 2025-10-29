@@ -11,6 +11,7 @@ import java.io.IOException;
 
 public class Assets {
     public static Image background;
+    public static Image backgroundMenu;
     public static Image paddle;
     public static Image ball;
     public static Image brick;
@@ -25,6 +26,14 @@ public class Assets {
     public static Image brickStrong2;
     public static Image brickStrong1;
 
+    /**
+     * PowerUp Image.
+     */
+    public static Image laserPowerUp;
+    public static Image extraLifePowerUp;
+    public static Image lifeDownPowerUp;
+    public static Image widePaddlePowerUp;
+
     // Sound clips
     public static Clip backgroundMusic;
     public static Clip paddleHitSound;
@@ -37,7 +46,8 @@ public class Assets {
     // gọi hàm này 1 lần khi khởi động game
     public static void load() {
         try {
-            background = ImageIO.read(new File("assets/Background1.png"));
+            backgroundMenu = ImageIO.read(new File("assets/Background1.png"));
+            background = ImageIO.read(new File("assets/Background2.png"));
             paddleNormal = ImageIO.read(new File("assets/Player.png")); // paddle
             paddleGlow = ImageIO.read(new File("assets/Player_flash.png"));
             ball = ImageIO.read(new File("assets/Ball_small-blue.png"));
@@ -47,6 +57,10 @@ public class Assets {
             brickStrong3 = ImageIO.read(new File("assets/Brick5_4.png")); // tím đậm (3 hit)
             brickStrong2 = ImageIO.read(new File("assets/Brick6_4.png")); // tím vừa (2 hit)
             brickStrong1 = ImageIO.read(new File("assets/Brick9_4.png")); // tím nhạt (1 hit)
+            laserPowerUp = ImageIO.read(new File("assets/laser.png"));
+            extraLifePowerUp = ImageIO.read(new File("assets/extralife.png"));
+            lifeDownPowerUp = ImageIO.read(new File("assets/debuff.png"));
+            widePaddlePowerUp = ImageIO.read(new File("assets/expand.png"));
 
             // Debug: Print working directory
             System.out.println("Working Directory: " + System.getProperty("user.dir"));

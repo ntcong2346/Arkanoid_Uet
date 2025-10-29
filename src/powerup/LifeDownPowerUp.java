@@ -2,7 +2,6 @@ package powerup;
 
 import entity.Paddle;
 
-import java.awt.Color;
 import java.awt.Graphics;
 
 /**
@@ -13,7 +12,7 @@ public class LifeDownPowerUp extends PowerUp {
     private static final String TYPE = "life_down";
 
     public LifeDownPowerUp(int x, int y) {
-        super(x, y, 25, 25, TYPE, DURATION_MS);
+        super(x, y, 100, 100, TYPE, DURATION_MS);
     }
 
     @Override
@@ -29,9 +28,6 @@ public class LifeDownPowerUp extends PowerUp {
 
     @Override
     public void render(Graphics g) {
-        g.setColor(Color.DARK_GRAY);  // Màu xám đen để biểu thị tiêu cực
-        g.fillRect((int) x, (int) y, width, height);
-        g.setColor(Color.RED);  // Chữ đỏ để cảnh báo
-        g.drawString("✖", (int) x + 8, (int) y + 16);  // Ký hiệu "X" cho giảm mạng
+        g.drawImage(graphics.Assets.lifeDownPowerUp, (int) x, (int) y, width, height, null);
     }
 }

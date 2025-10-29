@@ -1,6 +1,7 @@
 package powerup;
 
 import entity.Paddle;
+import graphics.Assets;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -33,7 +34,7 @@ public class WidePaddlePowerUp extends PowerUp {
      * @param y y-coordinate of the power-up
      */
     public WidePaddlePowerUp(int x, int y) {
-        super(x, y, 25, 25, TYPE, DURATION_MS);
+        super(x, y, 100, 100, TYPE, DURATION_MS);
     }
 
     /**
@@ -68,10 +69,7 @@ public class WidePaddlePowerUp extends PowerUp {
      */
     @Override
     public void render(Graphics g) {
-        g.setColor(Color.CYAN);
-        g.fillRect((int) x, (int) y, width, height);
-        g.setColor(Color.WHITE);
-        g.drawString("➤", (int) x + 6, (int) y + 16);
+        g.drawImage(Assets.widePaddlePowerUp, (int) x, (int) y, width, height, null);
     }
 
     /**
