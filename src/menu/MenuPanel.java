@@ -28,16 +28,19 @@ public class MenuPanel extends JPanel {
         gbc.gridx = 0;
         gbc.gridy = 0;
 
-        JLabel title = new JLabel("Arkanoid Pro 2025 - MENU");
-        title.setFont(new Font("Arial", Font.BOLD, 24));
-        add(title, gbc);
+        // Thay Title bằng 1 component trống
+        JLabel emptySpace = new JLabel("");
+        emptySpace.setPreferredSize(new Dimension(300, 33)); // Kích thước tương đương title
+        add(emptySpace, gbc);
 
         gbc.gridy++;
-        soundCheck = new JCheckBox("Sound on", true);
+        gbc.gridx = 1;
+        soundCheck = new JCheckBox("", true);
         add(soundCheck, gbc);
 
         gbc.gridy++;
-        gbc.gridx++;
+        gbc.gridx = 0;
+        gbc.gridx = 1;
         ballSpeedBox = new JComboBox<>(new String[]{"Slow", "Normal", "Fast"});
         add(ballSpeedBox, gbc);
 
