@@ -35,7 +35,7 @@ public class Ball extends MovableObject {
         if (!inMotion) {
             inMotion = true;
             Random rand = new Random();
-            dx = rand.nextBoolean() ? 1 : -1;
+            dx = rand.nextBoolean() ? 0.1 : -0.1; // Small dx value for less deviation.
             dy = -1; // Launch up
             normalize(speed);
         }

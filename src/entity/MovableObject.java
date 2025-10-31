@@ -16,6 +16,22 @@ public abstract class MovableObject extends GameObject {
         y += dy;
     }
 
+    public double getDx() {
+        return dx;
+    }
+
+    public double getDy() {
+        return dy;
+    }
+
+    public void setDx(double dx) {
+        this.dx = dx;
+    }
+
+    public void setDy(double dy) {
+        this.dy = dy;
+    }
+
     @Override
     public void update() {
         move();
