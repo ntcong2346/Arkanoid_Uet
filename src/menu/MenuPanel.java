@@ -39,6 +39,8 @@ public class MenuPanel extends JPanel {
         soundCheck = new JCheckBox("", true);
         if (MenuPanel.soundOn) {
             SoundManager.getInstance().playMusic("bg_music");
+        } else {
+            SoundManager.getInstance().stopMusic();
         }
         add(soundCheck, gbc);
 
@@ -126,7 +128,7 @@ public class MenuPanel extends JPanel {
             MenuPanel.soundOn = isSelected;
 
             if (isSelected) {
-                SoundManager.getInstance().play("bg_music");
+                SoundManager.getInstance().playMusic("bg_music");
             } else {
                 SoundManager.getInstance().stopMusic();
             }
