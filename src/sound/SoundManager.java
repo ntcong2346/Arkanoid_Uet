@@ -27,9 +27,6 @@ public class SoundManager {
     }
 
     private void loadSounds() {
-        System.out.println("DEBUG ROOT = " + getClass().getResource("/"));
-        System.out.println("TEST FILE = " + getClass().getResource("/assets/sound/hitpadle.wav"));
-
         soundMap.put("bounce", loadSound("/assets/sound/hitpadle.wav"));
         soundMap.put("wall", loadSound("/assets/sound/wall-hit.wav"));
         soundMap.put("brick_break", loadSound("/assets/sound/hitbrick.wav"));
