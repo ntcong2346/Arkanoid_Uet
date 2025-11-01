@@ -80,21 +80,21 @@ public class MenuPanel extends JPanel {
                     ballSpeed = 2;
                     break;
                 case 1:
-                    ballSpeed = 3;
+                    ballSpeed = 4;
                     break;
                 case 2:
-                    ballSpeed = 7;
+                    ballSpeed = 6;
                     break;
             }
             switch (ballSizeBox.getSelectedIndex()) {
                 case 0:
-                    ballSize = 4;
+                    ballSize = 5;
                     break;
                 case 1:
-                    ballSize = 6;
+                    ballSize = 8;
                     break;
                 case 2:
-                    ballSize = 14;
+                    ballSize = 10;
                     break;
             }
             switch (paddleSpeedBox.getSelectedIndex()) {
@@ -105,7 +105,7 @@ public class MenuPanel extends JPanel {
                     paddleSpeed = 6;
                     break;
                 case 2:
-                    paddleSpeed = 15;
+                    paddleSpeed = 10;
                     break;
             }
             gameMode = modeBox.getSelectedIndex();
