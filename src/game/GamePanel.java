@@ -9,6 +9,7 @@ import entity.Paddle;
 import entity.Brick;
 import powerup.PowerUp;
 import powerup.PowerUpManager;
+import sound.SoundManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -27,7 +28,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
     /** List of active power-ups falling from destroyed bricks. */
     private final List<PowerUp> powerUps = new ArrayList<>();
-
     private final List<Laser> lasers = new ArrayList<>();  // Thêm
 
     private boolean leftPressed = false, rightPressed = false;
@@ -110,6 +110,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 if (level > 5) {
                     gameOver = true;
                     win = true;
+                    SoundManager.getInstance().play("game_win");
                 } else {
                     createLevel(level);
                     ball.reset((int)paddle.getX() + paddle.getWidth() / 2.0,
@@ -146,13 +147,13 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         if (!ball.isInMotion() && !gameOver) {
             g.setColor(Color.YELLOW);
             g.setFont(new Font("Arial", Font.BOLD, 24));
-            g.drawString("Bấm SPACE để bắt đầu", WIDTH/2 - 130, HEIGHT/2 + 100);
+            g.drawString("Press SPACE to start", WIDTH/2 - 130, HEIGHT/2 + 100);
         }
 
         if (win) {
             g.setColor(Color.WHITE);
             g.setFont(new Font("Arial", Font.BOLD, 40));
-            g.drawString("Bạn đã chiến thắng!", WIDTH/2 - 180 , HEIGHT/2 - 100 );
+            g.drawString("You Win!", WIDTH/2 - 180 , HEIGHT/2 - 100 );
         }
 
         if (gameOver && !win) {
@@ -221,6 +222,13 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             powerUp.update();
 
             if (powerUp.getBounds().intersects(paddle.getBounds())) {
+                // Play power ups SFX
+                switch (powerUp.getType()) {
+                    case "wide" -> SoundManager.getInstance().play("extend_paddle");
+                    case "life" -> SoundManager.getInstance().play("life_up");
+                    case "life_down" -> SoundManager.getInstance().play("life_down");
+                }
+
                 powerUp.applyEffect(paddle);
                 checkGameOver();
                 powerUps.remove(i);
@@ -345,6 +353,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     private void checkGameOver() {
         if (lives <= 0) {
             gameOver = true;
+            SoundManager.getInstance().play("game_over");
         }
     }
 }

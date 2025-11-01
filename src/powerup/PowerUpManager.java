@@ -3,6 +3,7 @@ package powerup;
 import entity.Paddle;
 import game.CoopGamePanel;
 import game.GamePanel;
+import sound.SoundManager;
 
 /**
  * Singleton manager for distributing power-ups to active game panels.
@@ -53,6 +54,7 @@ public final class PowerUpManager {
                 int paddleTop = (int) paddle.getTop();
                 singlePanel.shootLaserFromPaddle(leftX, paddleTop);
                 singlePanel.shootLaserFromPaddle(rightX, paddleTop);
+                SoundManager.getInstance().play("laser");
             }
             if (coopPanel != null) {
                 if (coopPanel.getPaddle1() == paddle) {
@@ -61,6 +63,7 @@ public final class PowerUpManager {
                     int paddleTop = (int) paddle.getTop();
                     coopPanel.shootLaserFromPaddle(leftX, paddleTop);
                     coopPanel.shootLaserFromPaddle(rightX, paddleTop);
+                    SoundManager.getInstance().play("laser");
                 }
                 if (coopPanel.getPaddle2() == paddle) {
                     int leftX = (int) paddle.getLeft();
@@ -68,6 +71,7 @@ public final class PowerUpManager {
                     int paddleTop = (int) paddle.getTop();
                     coopPanel.shootLaserFromPaddle(leftX, paddleTop);
                     coopPanel.shootLaserFromPaddle(rightX, paddleTop);
+                    SoundManager.getInstance().play("laser");
                 }
             }
         }

@@ -9,6 +9,7 @@ import entity.Paddle;
 import entity.Brick;
 import powerup.PowerUp;
 import powerup.PowerUpManager;
+import sound.SoundManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -116,6 +117,7 @@ public class CoopGamePanel extends JPanel implements ActionListener, KeyListener
                 if (level > 5) {
                     gameOver = true;
                     win = true;
+                    SoundManager.getInstance().play("game_win");
                 } else {
                     createLevel(level);
                     paddleLaunchIndex = 1 - paddleLaunchIndex;
@@ -353,6 +355,7 @@ public class CoopGamePanel extends JPanel implements ActionListener, KeyListener
     private void checkGameOver() {
         if (lives <= 0) {
             gameOver = true;
+            SoundManager.getInstance().play("game_over");
         }
     }
 }

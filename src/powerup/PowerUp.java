@@ -29,6 +29,10 @@ public abstract class PowerUp extends GameObject {
         y += DEFAULT_VELOCITY_Y;
     }
 
+    public String getType() {
+        return type;
+    }
+
     /**
      * Applies the power-up effect to the given paddle.
      */

@@ -3,6 +3,7 @@ import game.GameFrame;
 import game.CoopGamePanel;
 import game.GamePanel;
 import graphics.Assets;
+import sound.SoundManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -36,6 +37,9 @@ public class MenuPanel extends JPanel {
         gbc.gridy++;
         gbc.gridx = 1;
         soundCheck = new JCheckBox("", true);
+        if (MenuPanel.soundOn) {
+            SoundManager.getInstance().playMusic("bg_music");
+        }
         add(soundCheck, gbc);
 
         gbc.gridy++;
@@ -59,17 +63,18 @@ public class MenuPanel extends JPanel {
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.gridx++;
-        modeBox = new JComboBox<>(new String[]{"Một người", "Hợp tác"});
+        modeBox = new JComboBox<>(new String[]{"1 Player", "2 Player"});
         add(modeBox, gbc);
 
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.gridwidth = 2;
-        startButton = new JButton("Bắt đầu chơi");
+        startButton = new JButton("Play");
         add(startButton, gbc);
 
         startButton.addActionListener(e -> {
             soundOn = soundCheck.isSelected();
+            SoundManager.getInstance().stopMusic();
             switch (ballSpeedBox.getSelectedIndex()) {
                 case 0:
                     ballSpeed = 2;
@@ -117,8 +122,15 @@ public class MenuPanel extends JPanel {
         soundCheck.addActionListener(e -> {
             boolean isSelected = soundCheck.isSelected();
             System.out.println("Sound toggled: " + isSelected);
-        });
 
+            MenuPanel.soundOn = isSelected;
+
+            if (isSelected) {
+                SoundManager.getInstance().play("bg_music");
+            } else {
+                SoundManager.getInstance().stopMusic();
+            }
+        });
     }
 
     @Override

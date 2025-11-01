@@ -7,6 +7,7 @@ import game.GamePanel;
 import powerup.PowerUp;
 import powerup.PowerUpFactory;
 import powerup.PowerUpManager;
+import sound.SoundManager;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -41,10 +42,15 @@ public class CollisionInfo {
      * Ball & wall collision.
      */
     private void handleWallCollision() {
-        if (ball.getX() - ball.getRadius() <= 0 || ball.getX() + ball.getRadius() >= GamePanel.WIDTH)
+        if (ball.getX() - ball.getRadius() <= 0 || ball.getX() + ball.getRadius() >= GamePanel.WIDTH) {
             ball.bounceHorizontal();
-        if (ball.getY() - ball.getRadius() <= 0)
+            SoundManager.getInstance().play("wall");
+        }
+
+        if (ball.getY() - ball.getRadius() <= 0) {
             ball.bounceVertical();
+            SoundManager.getInstance().play("wall");
+        }
     }
 
     /**
@@ -71,7 +77,7 @@ public class CollisionInfo {
         // Compute ball speed horizontally & vertically based on angle.
         // Breakout default up axis is 0 degrees -> rotate axis 90 degrees -> different sin cos formula.
         ball.setDx(speed * Math.sin(ballBounceAngle)); // Horizontal movement
-        ball.setDy(-speed * Math.cos(ballBounceAngle)); // Vertical movement (screen Y increases downward in Java)x
+        ball.setDy(-speed * Math.cos(ballBounceAngle)); // Vertical movement (screen Y increases downward in Java)
     }
     /**
      * Ball & paddle collision + set paddle glow when collided.
@@ -80,6 +86,7 @@ public class CollisionInfo {
         if (ball.intersects(paddle)) {
             paddle.setGlow();
             handleBallCollision(paddle);
+            SoundManager.getInstance().play("bounce");
         }
     }
 
@@ -91,11 +98,13 @@ public class CollisionInfo {
         if (ball.intersects(paddle1)) {
             handleBallCollision(paddle1);
             paddle1.setGlow();
+            SoundManager.getInstance().play("bounce");
             collided = true;
         }
 
         if (!collided && ball.intersects(paddle2)) {
             handleBallCollision(paddle2);
+            SoundManager.getInstance().play("bounce");
             paddle2.setGlow();
         }
     }
@@ -121,7 +130,20 @@ public class CollisionInfo {
                 }
                 // Dịch chuyển quá bóng ra khỏi gạch 1 ít để tránh bị kẹt
                 ball.move();
-                return brick.takeHit(bricks);
+                int score = brick.takeHit(bricks);
+
+                // Brick SFX play
+                if (!brick.isDestroyed()) {
+                    SoundManager.getInstance().play("bounce");
+                } else {
+                    if (brick.getType() == Brick.EXPLOSIVE) {
+                        SoundManager.getInstance().play("explode");
+                    } else {
+                        SoundManager.getInstance().play("brick_break");
+                    }
+                }
+
+                return score;
             }
         }
         return 0;
