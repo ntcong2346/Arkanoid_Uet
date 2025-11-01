@@ -137,10 +137,10 @@ public class Brick extends GameObject {
      * Drops a power-up from this destroyed brick with a 20% chance.
      */
     private void dropPowerUp() {
-        if (Math.random() < 0.2) { // 20% chance to drop
-            // Tính toán vị trí của Power-up (tâm gạch - 12px offset cho kích thước)
-            int powerUpX = (int) this.x - 12;
-            int powerUpY = (int) this.y - 12;
+        if (Math.random() < 0.3) { // 30% chance to drop
+            // Tính toán vị trí của Power-up (tâm gạch)
+            int powerUpX = (int) this.x;
+            int powerUpY = (int) this.y;
 
             PowerUp powerUp = PowerUpFactory.createRandom(powerUpX, powerUpY);
             PowerUpManager.addPowerUp(powerUp);

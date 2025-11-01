@@ -3,79 +3,43 @@ package powerup;
 import entity.Paddle;
 import graphics.Assets;
 
-import java.awt.Color;
 import java.awt.Graphics;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
- * Power-up that enables paddle to automatically shoot dual lasers from left and right edges.
+ * Power-up that triggers the laser effect on the paddle.
+ * The paddle itself manages the timing and state of the effect.
  */
 public class LaserPaddlePowerUp extends PowerUp {
     /** Duration of laser power-up in milliseconds. */
-    private static final int DURATION_MS = 4000;
+    private static final int DURATION_MS = 3000;
 
     /** Type identifier for this power-up. */
     private static final String TYPE = "laser";
 
-    /** Timer for continuous shooting. */
-    private Timer shootTimer;
-
     public LaserPaddlePowerUp(int x, int y) {
         super(x, y, 100, 100, TYPE, DURATION_MS);
-        this.shootTimer = null;
     }
 
+    /**
+     * Applies the effect by telling the paddle to activate its laser logic.
+     * @param paddle the paddle to apply the effect to
+     */
     @Override
     public void applyEffect(Paddle paddle) {
-        if (!paddle.isLaserActive()) {
-            paddle.setLaserActive(true);
-            startContinuousShooting(paddle);  // Bắt đầu bắn liên tục
-        }
-        resetTimer(paddle);  // Reset timer hiệu lực
+        paddle.activateLaser();
     }
 
+    /**
+     * Removes the effect by telling the paddle to deactivate its laser logic.
+     * @param paddle the paddle to remove the effect from
+     */
     @Override
     public void removeEffect(Paddle paddle) {
-        paddle.setLaserActive(false);
-        stopShooting();  // Dừng bắn khi hết hiệu lực
+        paddle.deactivateLaser();
     }
 
     @Override
     public void render(Graphics g) {
-        g.drawImage(Assets.laserPowerUp, (int) x, (int) y, width, height, null);
-    }
-
-    private void startContinuousShooting(Paddle paddle) {
-        if (shootTimer != null) {
-            shootTimer.cancel();  // Hủy timer cũ
-        }
-        shootTimer = new Timer();
-        shootTimer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                if (paddle.isLaserActive()) {
-                    PowerUpManager.shootDualLasers(paddle);  // Gọi qua PowerUpManager
-                }
-            }
-        }, 0, 1000);  // Bắn mỗi 0.5s
-    }
-
-    private void resetTimer(Paddle paddle) {
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                if (paddle.isLaserActive()) {
-                    removeEffect(paddle);
-                }
-            }
-        }, DURATION_MS);
-    }
-
-    private void stopShooting() {
-        if (shootTimer != null) {
-            shootTimer.cancel();
-            shootTimer = null;
-        }
+        g.drawImage(Assets.laserPowerUp, (int) getLeft(), (int) getTop(), width, height, null);
     }
 }

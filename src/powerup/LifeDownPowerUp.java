@@ -28,6 +28,6 @@ public class LifeDownPowerUp extends PowerUp {
 
     @Override
     public void render(Graphics g) {
-        g.drawImage(graphics.Assets.lifeDownPowerUp, (int) x, (int) y, width, height, null);
+        g.drawImage(graphics.Assets.lifeDownPowerUp, (int) getLeft(), (int) getTop(), width, height, null);
     }
 }

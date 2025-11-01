@@ -2,6 +2,7 @@ package game;
 
 import collision.CollisionInfo;
 import entity.Laser;
+import leaderboard.LeaderboardEntry;
 import menu.MenuPanel;
 import graphics.Assets;
 import entity.Ball;
@@ -10,6 +11,7 @@ import entity.Brick;
 import powerup.PowerUp;
 import powerup.PowerUpManager;
 import sound.SoundManager;
+import leaderboard.LeaderboardManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -80,16 +82,28 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             }
 
             ball.move();
-            
+
             // Collision detection & handler for ball, brick, paddle (add score based on collision)
             score += collisionInfo.updateCollision();
+            LeaderboardManager.getInstance().tryUpdateSinglePlayer(MenuPanel.playerName, score);
 
-            paddle.updateGlow();// Cập nhật hiệu ứng mỗi frame
-            updatePowerUps();
-            
+            paddle.updateGlow(); // Cập nhật hiệu ứng mỗi frame
+
             // Ball out of bounds
             if (ball.getY() > HEIGHT) {
                 lives--;
+
+                // TẮT LASER
+                paddle.deactivateLaser();
+
+                // TẮT WIDE PADDLE
+                if (paddle.isWideActive()) {
+                    paddle.deactivateWidePaddle();
+                }
+
+                lasers.clear();
+                powerUps.clear();
+
                 checkGameOver();
                 if (lives > 0) {
                     // reset ball position in the paddle
@@ -107,6 +121,18 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             }
             if (allDestroyed) {
                 level++;
+
+                // TẮT LASER
+                paddle.deactivateLaser();
+
+                // TẮT WIDE PADDLE
+                if (paddle.isWideActive()) {
+                    paddle.deactivateWidePaddle();
+                }
+
+                lasers.clear();
+                powerUps.clear();
+
                 if (level > 5) {
                     gameOver = true;
                     win = true;
@@ -118,6 +144,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 }
             }
         }
+        updatePowerUps();
         updateLasers();  // Thêm
         repaint();
     }
@@ -142,7 +169,20 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         g.setFont(new Font("Arial", Font.PLAIN, 18));
         g.drawString("Score: " + score, 10, 20);
         g.drawString("Lives: " + lives, WIDTH - 100, 20);
-        g.drawString("Level: " + level, WIDTH / 2 - 40, 20);
+        g.drawString("Level: " + level, WIDTH / 2 - 40, 40);
+
+        // THAY ĐỔI CHÍNH: Score to Beat / High Score
+        ArrayList<LeaderboardEntry> top = LeaderboardManager.getInstance().getTopSinglePlayerEntries();
+        int scoreToBeat = LeaderboardManager.getInstance().getScoreToBeat(score, false);
+        boolean isTop1 = !top.isEmpty() && score >= top.get(0).getSinglePlayerScore();
+
+        if (isTop1) {
+            g.setColor(Color.YELLOW);
+            g.drawString("High Score: " + score, WIDTH / 2 - 90, 20);
+        } else {
+            g.setColor(Color.WHITE);
+            g.drawString("Score to Beat: " + scoreToBeat, WIDTH / 2 - 85, 20);
+        }
 
         if (!ball.isInMotion() && !gameOver) {
             g.setColor(Color.YELLOW);
@@ -187,6 +227,16 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 level = 1;
             createLevel(level);
             ball.reset(paddle.getX() + paddle.getWidth() / 2.0, paddle.getY() - ball.getRadius() - 1);
+
+            // TẮT LASER
+            paddle.deactivateLaser();
+
+            // TẮT WIDE PADDLE
+            if (paddle.isWideActive()) {
+                paddle.deactivateWidePaddle();
+            }
+            lasers.clear();
+            powerUps.clear();
         }
     }
 
@@ -220,19 +270,21 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         for (int i = powerUps.size() - 1; i >= 0; i--) {
             PowerUp powerUp = powerUps.get(i);
             powerUp.update();
+            if (!gameOver){
+                if (powerUp.getBounds().intersects(paddle.getBounds())) {
+                    // Play power ups SFX
+                    switch (powerUp.getType()) {
+                        case "wide" -> SoundManager.getInstance().play("extend_paddle");
+                        case "life" -> SoundManager.getInstance().play("life_up");
+                        case "life_down" -> SoundManager.getInstance().play("life_down");
+                    }
 
-            if (powerUp.getBounds().intersects(paddle.getBounds())) {
-                // Play power ups SFX
-                switch (powerUp.getType()) {
-                    case "wide" -> SoundManager.getInstance().play("extend_paddle");
-                    case "life" -> SoundManager.getInstance().play("life_up");
-                    case "life_down" -> SoundManager.getInstance().play("life_down");
+                    powerUp.applyEffect(paddle);
+                    checkGameOver();
+                    powerUps.remove(i);
                 }
-
-                powerUp.applyEffect(paddle);
-                checkGameOver();
-                powerUps.remove(i);
-            } else if (!powerUp.isActive()) {
+            }
+            if (!powerUp.isActive()) {
                 powerUps.remove(i);
             }
         }
@@ -271,7 +323,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             for (int j = bricks.size() - 1; j >= 0; j--) {
                 Brick brick = bricks.get(j);
                 if (!brick.isDestroyed() && laser.getBounds().intersects(brick.getRect())) {
-                    score += brick.takeHit(bricks);
+                    if(!gameOver){
+                        score += brick.takeHit(bricks);
+                    }
                     lasers.remove(i);
                     break;
                 }
@@ -290,6 +344,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
     private void createLevel(int lvl) {
         bricks.clear();
+        powerUps.clear();
+        lasers.clear();
 
         int rows = 6;
         int cols = 12;

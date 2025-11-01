@@ -48,6 +48,6 @@ public abstract class PowerUp extends GameObject {
     }
 
     public Rectangle getBounds() {
-        return new Rectangle((int) x, (int) y, width, height);
+        return new Rectangle((int) getLeft(), (int) getTop(), width, height);
     }
 }

@@ -41,6 +41,6 @@ public class ExtraLifePowerUp extends PowerUp {
 
     @Override
     public void render(Graphics g) {
-        g.drawImage(graphics.Assets.extraLifePowerUp, (int) x, (int) y, width, height, null);
+        g.drawImage(graphics.Assets.extraLifePowerUp, (int) getLeft(), (int) getTop(), width, height, null);
     }
 }

@@ -2,6 +2,7 @@ package game;
 
 import collision.CollisionInfo;
 import entity.Laser;
+import leaderboard.LeaderboardEntry;
 import menu.MenuPanel;
 import graphics.Assets;
 import entity.Ball;
@@ -10,6 +11,7 @@ import entity.Brick;
 import powerup.PowerUp;
 import powerup.PowerUpManager;
 import sound.SoundManager;
+import leaderboard.LeaderboardManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -80,7 +82,6 @@ public class CoopGamePanel extends JPanel implements ActionListener, KeyListener
 
             paddle1.updateGlow();
             paddle2.updateGlow();
-            updatePowerUps();
 
             // Ball follows paddle before launch
             if (!ball.isInMotion()) {
@@ -93,10 +94,27 @@ public class CoopGamePanel extends JPanel implements ActionListener, KeyListener
 
             // Collision detection & handler for ball, brick, paddle (coop mode)
             score += collisionInfo.updateCollisionCoop(paddle1, paddle2);
+            LeaderboardManager.getInstance().tryUpdateCoop(MenuPanel.playerName, score);
 
             // Ball out of bounds
             if (ball.getY() > HEIGHT) {
                 lives--;
+
+                // TẮT LASER
+                paddle1.deactivateLaser();
+                paddle2.deactivateLaser();
+
+                // TẮT WIDE PADDLE
+                if (paddle1.isWideActive()) {
+                    paddle1.deactivateWidePaddle();
+                }
+                if (paddle2.isWideActive()) {
+                    paddle2.deactivateWidePaddle();
+                }
+
+                lasers.clear();
+                powerUps.clear();
+
                 checkGameOver();
                 if (lives > 0){
                     paddleLaunchIndex = 1 - paddleLaunchIndex; // Đổi paddle launch
@@ -114,6 +132,22 @@ public class CoopGamePanel extends JPanel implements ActionListener, KeyListener
             }
             if (allDestroyed) {
                 level++;
+
+                // TẮT LASER
+                paddle1.deactivateLaser();
+                paddle2.deactivateLaser();
+
+                // TẮT WIDE PADDLE
+                if (paddle1.isWideActive()) {
+                    paddle1.deactivateWidePaddle();
+                }
+                if (paddle2.isWideActive()) {
+                    paddle2.deactivateWidePaddle();
+                }
+
+                lasers.clear();
+                powerUps.clear();
+
                 if (level > 5) {
                     gameOver = true;
                     win = true;
@@ -125,6 +159,7 @@ public class CoopGamePanel extends JPanel implements ActionListener, KeyListener
                 }
             }
         }
+        updatePowerUps();
         updateLasers();
         repaint();
     }
@@ -148,7 +183,20 @@ public class CoopGamePanel extends JPanel implements ActionListener, KeyListener
         g.setFont(new Font("Arial", Font.PLAIN, 18));
         g.drawString("Score: " + score, 10, 20);
         g.drawString("Lives: " + lives, WIDTH - 100, 20);
-        g.drawString("Level: " + level, WIDTH/2 - 40, 20);
+        g.drawString("Level: " + level, WIDTH/2 - 40, 40);
+
+        // THAY ĐỔI CHÍNH: Score to Beat / High Score
+        ArrayList<LeaderboardEntry> top = LeaderboardManager.getInstance().getTopCoopEntries();
+        int scoreToBeat = LeaderboardManager.getInstance().getScoreToBeat(score, false);
+        boolean isTop1 = !top.isEmpty() && score >= top.get(0).getCoopScore();
+
+        if (isTop1) {
+            g.setColor(Color.YELLOW);
+            g.drawString("High Score: " + score, WIDTH / 2 - 90, 20);
+        } else {
+            g.setColor(Color.WHITE);
+            g.drawString("Score to Beat: " + scoreToBeat, WIDTH / 2 - 85, 20);
+        }
 
         if (!ball.isInMotion() && !gameOver) {
             g.setColor(Color.YELLOW);
@@ -189,6 +237,21 @@ public class CoopGamePanel extends JPanel implements ActionListener, KeyListener
                 level = 1;
             createLevel(level);
             ball.reset(paddle1.getX() + paddle1.getWidth() / 2.0 - ball.getDiameter() / 2.0, paddle1.getY() - ball.getDiameter() - 2);
+
+            // TẮT LASER
+            paddle1.deactivateLaser();
+            paddle2.deactivateLaser();
+
+            // TẮT WIDE PADDLE
+            if (paddle1.isWideActive()) {
+                paddle1.deactivateWidePaddle();
+            }
+            if (paddle2.isWideActive()) {
+                paddle2.deactivateWidePaddle();
+            }
+
+            lasers.clear();
+            powerUps.clear();
         }
     }
 
@@ -226,14 +289,15 @@ public class CoopGamePanel extends JPanel implements ActionListener, KeyListener
             PowerUp powerUp = powerUps.get(i);
             powerUp.update();
 
-            Paddle hitPaddle = getHitPaddle(powerUp);
-            if (hitPaddle != null) {
-                powerUp.applyEffect(hitPaddle);  // Áp dụng cho paddle bị va chạm
-                checkGameOver();
-                powerUps.remove(i);
-                continue;
+            if(!gameOver){
+                Paddle hitPaddle = getHitPaddle(powerUp);
+                if (hitPaddle != null) {
+                    powerUp.applyEffect(hitPaddle);  // Áp dụng cho paddle bị va chạm
+                    checkGameOver();
+                    powerUps.remove(i);
+                    continue;
+                }
             }
-
             if (!powerUp.isActive()) {
                 powerUps.remove(i);
             }
@@ -287,7 +351,9 @@ public class CoopGamePanel extends JPanel implements ActionListener, KeyListener
             for (int j = bricks.size() - 1; j >= 0; j--) {
                 Brick brick = bricks.get(j);
                 if (!brick.isDestroyed() && laser.getBounds().intersects(brick.getRect())) {
-                    score += brick.takeHit(bricks);
+                    if(!gameOver){
+                        score += brick.takeHit(bricks);
+                    }
                     lasers.remove(i);
                     break;
                 }
@@ -303,6 +369,9 @@ public class CoopGamePanel extends JPanel implements ActionListener, KeyListener
 
     private void createLevel(int lvl) {
         bricks.clear();
+        powerUps.clear();
+        lasers.clear();
+
         int rows = 5, cols = 10;
         int brickW = 70, brickH = 20;
         int offsetX = (WIDTH - cols * brickW) / 2;
@@ -325,7 +394,7 @@ public class CoopGamePanel extends JPanel implements ActionListener, KeyListener
                 for (int r = 0; r < rows; r++)
                     for (int c = 0; c < cols; c++) {
                         int type = ( (r == 0 && (c == 0 || c == cols-1)) || (r == rows-1 && (c == 0 || c == cols-1)) )
-                            ? Brick.EXPLOSIVE : Brick.NORMAL;
+                                ? Brick.EXPLOSIVE : Brick.NORMAL;
                         bricks.add(new Brick(offsetX + c * brickW, offsetY + r * brickH, brickW - 2, brickH - 2, type));
                     }
                 break;
