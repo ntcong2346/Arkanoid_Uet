@@ -10,7 +10,7 @@ import java.awt.Rectangle;
  */
 public abstract class PowerUp extends GameObject {
     /** Default falling velocity in pixels per frame. */
-    private static final int DEFAULT_VELOCITY_Y = 2;
+    private static final int DEFAULT_VELOCITY_Y = 1;
 
     /** Power-up screen height limit before removal. */
     private static final int SCREEN_HEIGHT_LIMIT = 620;

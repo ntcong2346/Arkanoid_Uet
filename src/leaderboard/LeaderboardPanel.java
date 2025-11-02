@@ -24,7 +24,7 @@ public class LeaderboardPanel extends JPanel {
 
     // === TÁCH: TITLE ===
     private JLabel createTitleLabel() {
-        JLabel label = new JLabel("BẢNG XẾP HẠNG", SwingConstants.CENTER);
+        JLabel label = new JLabel("SCOREBOARD", SwingConstants.CENTER);
         label.setFont(new Font("Arial", Font.BOLD, 24));
         label.setForeground(Color.YELLOW);
         label.setBorder(BorderFactory.createEmptyBorder(10, 0, 20, 0));
@@ -37,8 +37,8 @@ public class LeaderboardPanel extends JPanel {
         panel.setBackground(Color.BLACK);
         panel.setBorder(BorderFactory.createEmptyBorder(0, 20, 20, 20));
 
-        panel.add(createModePanel("SINGLE PLAYER", true));
-        panel.add(createModePanel("CO-OP MODE", false));
+        panel.add(createModePanel("1 PLAYER", true));
+        panel.add(createModePanel("2 PLAYERS", false));
 
         return panel;
     }
@@ -106,7 +106,7 @@ public class LeaderboardPanel extends JPanel {
     // === HIỂN THỊ DIALOG ===
     public static void showLeaderboardDialog(Component parent) {
         JDialog dialog = new JDialog();
-        dialog.setTitle("Bảng Xếp Hạng");
+        dialog.setTitle("Scoreboard");
         dialog.setModal(true);
         dialog.setResizable(false);
         dialog.add(new LeaderboardPanel());

@@ -82,7 +82,7 @@ public class MenuPanel extends JPanel {
 
         // THÊM NÚT BẢNG XẾP HẠNG
         gbc.gridy++;
-        leaderboardButton = new JButton("Bảng xếp hạng");
+        leaderboardButton = new JButton("Scoreboard");
         add(leaderboardButton, gbc);
 
         startButton.addActionListener(e -> {
