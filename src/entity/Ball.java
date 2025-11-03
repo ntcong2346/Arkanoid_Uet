@@ -4,8 +4,9 @@ import graphics.Assets;
 
 import java.awt.*;
 import java.util.Random;
+import java.io.Serializable;
 
-public class Ball extends MovableObject {
+public class Ball extends MovableObject implements Serializable{
     private final int radius;
     private final int speed;
     private boolean inMotion; // Is ball flying?

@@ -1,8 +1,9 @@
 package entity;
 
 import java.awt.*;
+import java.io.Serializable;
 
-public abstract class MovableObject extends GameObject {
+public abstract class MovableObject extends GameObject implements Serializable{
     protected double dx, dy;
 
     public MovableObject(double x, double y, int width, int height) {

@@ -1,8 +1,9 @@
 package entity;
 
 import java.awt.*;
+import java.io.Serializable;
 
-public abstract class GameObject {
+public abstract class GameObject implements Serializable{
     protected double x;
     protected double y;
     protected int width;

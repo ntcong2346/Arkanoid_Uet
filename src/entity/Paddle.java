@@ -4,10 +4,11 @@ import graphics.Assets;
 import powerup.PowerUpManager;
 
 import java.awt.*;
+import java.io.Serializable;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class Paddle extends MovableObject {
+public class Paddle extends MovableObject implements Serializable{
     private int speed;
     private boolean glowing;
     private int glowTimer;
@@ -16,12 +17,12 @@ public class Paddle extends MovableObject {
     private int originalWidth;
 
     // Timer cho hiệu ứng Laser
-    private Timer laserShootTimer;
-    private Timer laserDeactivationTimer;
+    private transient Timer laserShootTimer;
+    private transient Timer laserDeactivationTimer;
     private static final int LASER_DURATION_MS = 4000;
 
     // --- THÊM MỚI: Timer cho hiệu ứng Wide Paddle ---
-    private Timer widePaddleDeactivationTimer;
+    private transient Timer widePaddleDeactivationTimer;
     private static final int WIDE_PADDLE_DURATION_MS = 10000;
 
     public Paddle(double x, double y, int width, int height, int speed) {

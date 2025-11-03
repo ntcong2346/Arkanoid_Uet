@@ -38,10 +38,16 @@ public class MainMenuPanel extends JPanel {
         add(emptySpace, gbc);
 
         // --- BUTTONS ---
-        JButton startButton = new JButton("Start Game");
+        JButton startButton = new JButton("New Game");
         styleButton(startButton);
         gbc.gridy++;
         add(startButton, gbc);
+
+        // THÊM NÚT LOAD GAME
+        JButton loadButton = new JButton("Load Game");
+        styleButton(loadButton);
+        gbc.gridy++;
+        add(loadButton, gbc);
 
         JButton settingsButton = new JButton("Settings");
         styleButton(settingsButton);
@@ -65,7 +71,11 @@ public class MainMenuPanel extends JPanel {
             // Note: Start logic from original MenuPanel is complex (name input, game mode).
             // For simplicity, this will just call the startGame method of the SettingsPanel
             // which handles the name input and launching the game.
-            new MenuPanel(menuFrame).startGame(menuFrame);
+            new MenuPanel(menuFrame).newGame(menuFrame);
+        });
+
+        loadButton.addActionListener(e -> {
+            new MenuPanel(menuFrame).loadGame(menuFrame); // <-- GỌI PHƯƠNG THỨC ĐÓNG GÓI
         });
 
         // Settings button - Opens the Settings Panel

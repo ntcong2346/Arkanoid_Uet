@@ -12,6 +12,7 @@ import powerup.PowerUp;
 import powerup.PowerUpManager;
 import sound.SoundManager;
 import leaderboard.LeaderboardManager;
+import savegame.GameSaveData;
 
 import javax.swing.*;
 import java.awt.*;
@@ -49,6 +50,91 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         Timer timer = new Timer(10, this); // 100 fps
         timer.start();
         PowerUpManager.setSinglePanel(this);
+    }
+
+    // --- THÊM MỚI: Constructor dùng cho LOAD GAME ---
+    /**
+     * Constructor dùng để khởi tạo game từ dữ liệu đã lưu.
+     * @param loadedData Đối tượng GameSaveData đã được tải.
+     */
+    public GamePanel(final GameSaveData loadedData) {
+        this.setPreferredSize(new Dimension(WIDTH, HEIGHT));
+        this.setBackground(Color.BLACK);
+        this.setFocusable(true);
+        this.addKeyListener(this);
+
+        loadGame(loadedData); // Tải game
+
+        Timer timer = new Timer(10, this); // 100 fps
+        timer.start();
+        PowerUpManager.setSinglePanel(this);
+    }
+
+    /**
+     * Khởi tạo game bằng dữ liệu đã lưu.
+     * @param loadedData Đối tượng GameSaveData chứa trạng thái game đã lưu.
+     */
+    private void loadGame(final GameSaveData loadedData) {
+        // Khôi phục trạng thái game
+        level = loadedData.getLevel();
+        score = loadedData.getScore();
+        lives = loadedData.getLives();
+        win = false;
+        gameOver = false;
+
+        // Áp dụng các cài đặt đã lưu (Sử dụng static variable của MenuPanel)
+        MenuPanel.gameMode = loadedData.getGameMode();
+        MenuPanel.ballSpeed = loadedData.getBallSpeed();
+        MenuPanel.ballSize = loadedData.getBallSize();
+        MenuPanel.paddleSpeed = loadedData.getPaddleSpeed();
+        MenuPanel.playerName = loadedData.getPlayerName(); // Khôi phục tên
+
+        // Khởi tạo các đối tượng với cài đặt đã lưu
+        // Vị trí Paddle được khôi phục
+        paddle = new Paddle(loadedData.getPaddle1X(), HEIGHT - 50, 120, 15, MenuPanel.paddleSpeed);
+        paddle.setSpeed(MenuPanel.paddleSpeed);
+
+        // Reset bóng về paddle, không cần save vị trí bóng.
+        ball = new Ball(paddle.getX(), paddle.getTop() - MenuPanel.ballSize - 1, MenuPanel.ballSize, MenuPanel.ballSpeed);
+        // Đảm bảo bóng PAUSED (vì ball.reset() làm điều đó)
+        ball.reset(paddle.getX(), paddle.getTop() - MenuPanel.ballSize - 1);
+
+        // Khôi phục trạng thái gạch
+        bricks = loadedData.getBricksState();
+
+        // Khởi tạo lại CollisionInfo với các đối tượng mới
+        collisionInfo = new CollisionInfo(ball, paddle, bricks);
+
+        // Power-ups và Lasers được reset khi load game (theo yêu cầu không cần save power up)
+        powerUps.clear();
+        lasers.clear();
+    }
+
+    /**
+     * Tạo đối tượng GameSaveData từ trạng thái game hiện tại.
+     * @return Đối tượng GameSaveData.
+     */
+    public final GameSaveData createSaveData() {
+        // --- LỌC DANH SÁCH GẠCH ---
+        final ArrayList<Brick> remainingBricks = new ArrayList<>();
+        for (final Brick b : bricks) {
+            if (!b.isDestroyed()) {
+                remainingBricks.add(b);
+            }
+        }
+
+        return new GameSaveData(
+                MenuPanel.playerName,
+                0, // Dùng giá trị cố định 0 (Single Player)
+                level,
+                lives,
+                score,
+                paddle.getX(),
+                remainingBricks,
+                MenuPanel.paddleSpeed,
+                MenuPanel.ballSpeed,
+                MenuPanel.ballSize
+        );
     }
 
     private void initGame() {
@@ -411,5 +497,13 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             gameOver = true;
             SoundManager.getInstance().play("game_over");
         }
+    }
+
+    public final boolean isGameOver() {
+        return gameOver;
+    }
+
+    public final boolean isBallInMotion() {
+        return ball.isInMotion();
     }
 }

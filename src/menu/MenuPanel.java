@@ -4,6 +4,8 @@ import game.GameFrame;
 import game.CoopGamePanel;
 import game.GamePanel;
 import graphics.Assets;
+import savegame.GameSaveData;
+import savegame.GameSaverLoader;
 import sound.SoundManager;
 import leaderboard.LeaderboardPanel; // Cần import nếu LeaderboardPanel được dùng ở đâu đó
 import javax.swing.*;
@@ -261,7 +263,7 @@ public class MenuPanel extends JPanel {
     // ... (startGame method and utility methods getSpeedIndex, getSizeIndex, paintComponent remain the same) ...
 
     // Encapsulated logic for starting the game
-    public void startGame(JFrame menuFrame) {
+    public void newGame(JFrame menuFrame) {
         applySettings();
 
         boolean validName = false;
@@ -274,19 +276,89 @@ public class MenuPanel extends JPanel {
             } else {
                 playerName = name.trim();
                 validName = true;
+                GameSaverLoader.deleteSaveFile();
             }
         }
 
         SoundManager.getInstance().stopMusic();
 
         menuFrame.dispose();
-        JFrame gameFrame = new GameFrame();
         if (gameMode == 1) {
-            gameFrame.setContentPane(new CoopGamePanel());
+            new GameFrame(new CoopGamePanel());
         } else {
-            gameFrame.setContentPane(new GamePanel());
+            new GameFrame(new GamePanel());
         }
-        gameFrame.setVisible(true);
+    }
+
+    /**
+     * Logic for load game button.
+     * @param menuFrame
+     */
+    public void loadGame(JFrame menuFrame){
+        // 1. Kiểm tra sự tồn tại của file save
+        if (!GameSaverLoader.saveFileExists()) {
+            JOptionPane.showMessageDialog(
+                    menuFrame,
+                    "Chưa có file save game nào được tạo.",
+                    "Lỗi Load Game",
+                    JOptionPane.WARNING_MESSAGE
+            );
+            return;
+        }
+
+        // 2. Tải dữ liệu để kiểm tra và hiển thị
+        final GameSaveData loadedData = GameSaverLoader.loadGame();
+        if (loadedData == null) {
+            JOptionPane.showMessageDialog(
+                    menuFrame,
+                    "Lỗi đọc file save.",
+                    "Lỗi Load Game",
+                    JOptionPane.ERROR_MESSAGE
+            );
+            return;
+        }
+
+        // Xây dựng thông báo xác nhận
+        final String ballSpeedStr = loadedData.getSettingString("ballSpeed", loadedData.getBallSpeed());
+        final String ballSizeStr = loadedData.getSettingString("ballSize", loadedData.getBallSize());
+        final String paddleSpeedStr = loadedData.getSettingString("paddleSpeed", loadedData.getPaddleSpeed());
+        final String gameModeStr = (loadedData.getGameMode() == 1) ? "Co-op" : "Single Player";
+
+        final String message = "Bạn có chắc muốn chơi lại lần trước?\n\n"
+                + "Người chơi: " + loadedData.getPlayerName() + " (" + gameModeStr + ")\n"
+                + "Level: " + loadedData.getLevel() + "\n"
+                + "Lives: " + loadedData.getLives() + "\n"
+                + "Score: " + loadedData.getScore() + "\n"
+                + "Tổng gạch còn lại: " + loadedData.getBricksState().size() + "\n\n"
+                + "Cài đặt của lần trước:\n"
+                + "- Tốc độ bóng: " + ballSpeedStr + "\n"
+                + "- Kích thước bóng: " + ballSizeStr + "\n"
+                + "- Tốc độ Paddle: " + paddleSpeedStr;
+
+        final int result = JOptionPane.showConfirmDialog(
+                menuFrame,
+                message,
+                "Xác nhận chơi lại?",
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.INFORMATION_MESSAGE
+        );
+
+        if (result == JOptionPane.OK_OPTION) {
+            SoundManager.getInstance().stopMusic();
+
+            menuFrame.dispose();
+
+            // Cập nhật biến tĩnh gameMode, playerName để đồng bộ với game đã tải
+            MenuPanel.gameMode = loadedData.getGameMode();
+            MenuPanel.playerName = loadedData.getPlayerName();
+
+            // Khởi tạo game với dữ liệu đã tải
+            if (loadedData.getGameMode() == 1) {
+                new GameFrame(new CoopGamePanel(loadedData));
+            } else {
+                new GameFrame(new GamePanel(loadedData));
+            }
+        }
     }
 
     // Utility methods

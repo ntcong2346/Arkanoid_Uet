@@ -7,8 +7,9 @@ import graphics.Assets;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.io.Serializable;
 
-public class Brick extends GameObject {
+public class Brick extends GameObject implements Serializable{
     // Các loại gạch
     public static final int NORMAL = 0;
     public static final int EXPLOSIVE = 1;

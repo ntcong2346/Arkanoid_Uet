@@ -12,6 +12,7 @@ import powerup.PowerUp;
 import powerup.PowerUpManager;
 import sound.SoundManager;
 import leaderboard.LeaderboardManager;
+import savegame.GameSaveData;
 
 import javax.swing.*;
 import java.awt.*;
@@ -52,6 +53,85 @@ public class CoopGamePanel extends JPanel implements ActionListener, KeyListener
         Timer timer = new Timer(10, this);
         timer.start();
         PowerUpManager.setCoopPanel(this);
+    }
+
+    // --- THÊM MỚI: Constructor dùng cho LOAD GAME ---
+    public CoopGamePanel(final GameSaveData loadedData) {
+        setPreferredSize(new Dimension(WIDTH, HEIGHT));
+        setBackground(Color.BLACK);
+        setFocusable(true);
+        addKeyListener(this);
+
+        loadGame(loadedData); // Tải game
+
+        Timer timer = new Timer(10, this);
+        timer.start();
+        PowerUpManager.setCoopPanel(this);
+    }
+
+    /**
+     * Khởi tạo game bằng dữ liệu đã lưu.
+     */
+    private void loadGame(final GameSaveData loadedData) {
+        // Khôi phục trạng thái game
+        level = loadedData.getLevel();
+        score = loadedData.getScore();
+        lives = loadedData.getLives();
+        win = false;
+        gameOver = false;
+        paddleLaunchIndex = 0; // Luôn dùng paddle 1 để launch khi load
+
+        // Áp dụng các cài đặt đã lưu
+        MenuPanel.gameMode = loadedData.getGameMode();
+        MenuPanel.ballSpeed = loadedData.getBallSpeed();
+        MenuPanel.ballSize = loadedData.getBallSize();
+        MenuPanel.paddleSpeed = loadedData.getPaddleSpeed();
+        MenuPanel.playerName = loadedData.getPlayerName();
+
+        // Khởi tạo các đối tượng với cài đặt đã lưu
+        paddle1 = new Paddle(loadedData.getPaddle1X(), HEIGHT - 50, 120, 15, MenuPanel.paddleSpeed);
+        paddle2 = new Paddle(loadedData.getPaddle2X(), HEIGHT - 50, 120, 15, MenuPanel.paddleSpeed);
+        paddle1.setSpeed(MenuPanel.paddleSpeed);
+        paddle2.setSpeed(MenuPanel.paddleSpeed);
+
+        // Reset bóng về paddle 1 (paddleLaunchIndex = 0)
+        ball = new Ball(paddle1.getX(), paddle1.getTop() - MenuPanel.ballSize - 1, MenuPanel.ballSize, MenuPanel.ballSpeed);
+        ball.reset(paddle1.getX(), paddle1.getTop() - MenuPanel.ballSize - 1); // Đảm bảo bóng PAUSED
+
+        // Khôi phục trạng thái gạch
+        bricks = loadedData.getBricksState();
+
+        // Khởi tạo lại CollisionInfo với các đối tượng mới
+        collisionInfo = new CollisionInfo(ball, paddle1, bricks);
+    }
+
+
+    /**
+     * Tạo đối tượng GameSaveData từ trạng thái game hiện tại.
+     * @return Đối tượng GameSaveData.
+     */
+    public final GameSaveData createSaveData() {
+        // --- LỌC DANH SÁCH GẠCH ---
+        final ArrayList<Brick> remainingBricks = new ArrayList<>();
+        for (final Brick b : bricks) {
+            if (!b.isDestroyed()) {
+                remainingBricks.add(b);
+            }
+        }
+
+        return new GameSaveData(
+                MenuPanel.playerName,
+                1, // <-- SỬA LỖI: Dùng giá trị cố định 1 (Co-op Player)
+                level,
+                lives,
+                score,
+                paddle1.getX(),
+                paddle2.getX(),
+                remainingBricks,
+                MenuPanel.paddleSpeed,
+                MenuPanel.ballSpeed,
+                MenuPanel.ballSize
+        );
     }
 
     private void initGame() {
@@ -187,7 +267,7 @@ public class CoopGamePanel extends JPanel implements ActionListener, KeyListener
 
         // THAY ĐỔI CHÍNH: Score to Beat / High Score
         ArrayList<LeaderboardEntry> top = LeaderboardManager.getInstance().getTopCoopEntries();
-        int scoreToBeat = LeaderboardManager.getInstance().getScoreToBeat(score, false);
+        int scoreToBeat = LeaderboardManager.getInstance().getScoreToBeat(score, true);
         boolean isTop1 = !top.isEmpty() && score >= top.get(0).getCoopScore();
 
         if (isTop1) {
@@ -426,5 +506,12 @@ public class CoopGamePanel extends JPanel implements ActionListener, KeyListener
             gameOver = true;
             SoundManager.getInstance().play("game_over");
         }
+    }
+    public final boolean isGameOver() {
+        return gameOver;
+    }
+
+    public final boolean isBallInMotion() {
+        return ball.isInMotion();
     }
 }
