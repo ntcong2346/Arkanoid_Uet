@@ -106,7 +106,8 @@ public class MainMenuPanel extends JPanel {
     private void showInfoDialog() {
         String info = "<html><p style='width: 300px; text-align: center;'>" +
                 "<b>How to Play:</b> Use left/right arrow keys or A/D to move the paddle.<br>" +
-                "Objective: Destroy all bricks to win levels.<br><br>" +
+                "Objective: Destroy all bricks to win levels.<br>" +
+                "Utility:</b> Press F5 to create a save file and keep your current game state.<br><br>" +
                 "</p></html>";
         JOptionPane.showMessageDialog(
                 menuFrame,

@@ -10,6 +10,7 @@ import entity.Paddle;
 import entity.Brick;
 import powerup.PowerUp;
 import powerup.PowerUpManager;
+import savegame.GameSaverLoader;
 import sound.SoundManager;
 import leaderboard.LeaderboardManager;
 import savegame.GameSaveData;
@@ -38,6 +39,11 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     private boolean gameOver = false;
     private boolean win = false;
     private int level = 1; // Thêm biến level
+
+    // --- THÊM MỚI CHO THÔNG BÁO SAVE ---
+    private Timer messageTimer;
+    private String saveMessage = null;
+    private static final int MESSAGE_DURATION_MS = 2000; // 2 giây
 
     public GamePanel() {
         this.setPreferredSize(new Dimension(WIDTH, HEIGHT));
@@ -291,6 +297,13 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             g.setFont(new Font("Arial", Font.BOLD, 36));
             g.drawString("Press R to Restart", 235, HEIGHT/2 + 50);
         }
+
+        if (saveMessage != null) {
+            // Cài đặt Font:
+            g.setFont(new Font("Arial", Font.BOLD, 18));
+            g.setColor(Color.GREEN.darker());
+            g.drawString(saveMessage, 9, 43);
+        }
     }
 
     // KeyListener
@@ -323,6 +336,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             }
             lasers.clear();
             powerUps.clear();
+        }
+        if (k == KeyEvent.VK_F5) {
+            handleSaveGame();
         }
     }
 
@@ -499,11 +515,36 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         }
     }
 
-    public final boolean isGameOver() {
-        return gameOver;
-    }
+    /**
+     * Phương thức đóng gói logic Lưu Game.
+     */
+    private void handleSaveGame() {
+        // 1. Kiểm tra điều kiện lưu
+        if (gameOver || win) {
+            System.out.println("Lưu Game: Thất bại. Game đã kết thúc.");
+            return;
+        }
 
-    public final boolean isBallInMotion() {
-        return ball.isInMotion();
+        // Thực hiện lưu game
+        GameSaveData saveData = createSaveData();
+        GameSaverLoader.saveGame(saveData);
+
+        // Đặt nội dung thông báo
+        saveMessage = "Game Saved!";
+
+        // Bắt đầu Timer
+        if (messageTimer != null) {
+            messageTimer.stop(); // Dừng nếu đã có thông báo cũ đang chạy
+        }
+
+        // Timer sẽ xóa thông báo sau 2000ms (2 giây)
+        messageTimer = new Timer(MESSAGE_DURATION_MS, e -> {
+            saveMessage = null; // Xóa nội dung
+            repaint(); // Yêu cầu vẽ lại để xóa thông báo khỏi màn hình
+            ((Timer)e.getSource()).stop(); // Dừng Timer này
+        });
+
+        messageTimer.setRepeats(false);
+        messageTimer.start();
     }
 }

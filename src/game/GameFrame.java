@@ -1,14 +1,10 @@
 package game;
 
 import javax.swing.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import savegame.GameSaveData;
-import savegame.GameSaverLoader;
 
 public class GameFrame extends JFrame {
 
-    private JComponent activeGamePanel; // Thêm biến để lưu panel đang hoạt động
+    private JComponent activeGamePanel;
 
     /**
      * Constructor GỐC (Không tham số).
@@ -33,36 +29,15 @@ public class GameFrame extends JFrame {
         this.setContentPane(panel);
         this.setTitle("Arkanoid 2025");
 
-        // THAY ĐỔI: Dùng DO_NOTHING_ON_CLOSE để bắt sự kiện đóng và lưu game
-        this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        // Quay lại chế độ đóng cửa sổ thông thường
+        // Không còn cần lắng nghe sự kiện đóng cửa sổ để lưu game nữa
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         this.setResizable(false);
         this.pack();
         this.setLocationRelativeTo(null);
 
-        // THÊM: Logic lưu game khi đóng cửa sổ
-        this.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(final WindowEvent e) {
-                // Chỉ lưu game nếu đang trong Game Panel VÀ game CHƯA KẾT THÚC VÀ BÓNG ĐANG BAY
-                if (activeGamePanel instanceof GamePanel singlePanel) {
-                    // Điều kiện
-                    if (!singlePanel.isGameOver() && singlePanel.isBallInMotion()) {
-                        GameSaveData saveData = singlePanel.createSaveData();
-                        GameSaverLoader.saveGame(saveData);
-                    }
-                } else if (activeGamePanel instanceof CoopGamePanel coopPanel) {
-                    // Điều kiện
-                    if (!coopPanel.isGameOver() && coopPanel.isBallInMotion()) {
-                        GameSaveData saveData = coopPanel.createSaveData();
-                        GameSaverLoader.saveGame(saveData);
-                    }
-                }
-
-                // Sau khi kiểm tra và lưu xong, đóng cửa sổ
-                System.exit(0);
-            }
-        });
+        // LOẠI BỎ TOÀN BỘ KHỐI addWindowListener VÀ LOGIC LƯU GAME
 
         this.setVisible(true);
     }
