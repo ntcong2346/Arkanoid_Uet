@@ -3,6 +3,7 @@ package entity;
 import graphics.Assets;
 import powerup.PowerUpManager;
 
+import javax.swing.*;
 import java.awt.*;
 import java.io.Serializable;
 import java.util.Timer;
@@ -21,7 +22,7 @@ public class Paddle extends MovableObject implements Serializable{
     private transient Timer laserDeactivationTimer;
     private static final int LASER_DURATION_MS = 4000;
 
-    // --- THÊM MỚI: Timer cho hiệu ứng Wide Paddle ---
+    // Timer cho hiệu ứng Wide Paddle
     private transient Timer widePaddleDeactivationTimer;
     private static final int WIDE_PADDLE_DURATION_MS = 10000;
 
@@ -33,7 +34,7 @@ public class Paddle extends MovableObject implements Serializable{
         this.originalWidth = width; // Lưu lại chiều rộng ban đầu khi khởi tạo
     }
 
-    // --- LOGIC CHO LASER ---
+    // Logic cho laser
     public void activateLaser() {
         isLaserActive = true;
         if (laserShootTimer == null) {

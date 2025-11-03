@@ -21,7 +21,7 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GamePanel extends JPanel implements ActionListener, KeyListener {
+public class GamePanel extends JPanel implements KeyListener {
     public static final int WIDTH = 800;
     public static final int HEIGHT = 600;
 
@@ -45,6 +45,47 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     private String saveMessage = null;
     private static final int MESSAGE_DURATION_MS = 2000; // 2 giây
 
+    // Xử lí đa luồng
+    private Thread gameThread;
+    private volatile boolean gameRunning = false;
+    private final int FPS = 100;
+
+    public void startGame() {
+        if(gameThread == null || !gameThread.isAlive()) {
+            gameRunning = true;
+            gameThread = new Thread(this::gameLoop);
+            gameThread.start();
+        }
+    }
+
+    private void gameLoop() {
+        long lastTime = System.nanoTime();
+        double nsPerTick = 1_000_000_000.0 / FPS;
+        double delta = 0;
+
+        while (gameRunning) {
+            long now = System.nanoTime();
+            delta += (now - lastTime) / nsPerTick;
+            lastTime = now;
+
+            if (delta >= 1) {
+                update();
+                SwingUtilities.invokeLater(this::repaint);
+                delta--;
+            }
+
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+    }
+
+    public void stopGame() {
+        gameRunning = false;
+    }
+
     public GamePanel() {
         this.setPreferredSize(new Dimension(WIDTH, HEIGHT));
         this.setBackground(Color.BLACK);
@@ -52,9 +93,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         this.addKeyListener(this);
 
         initGame();
-
-        Timer timer = new Timer(10, this); // 100 fps
-        timer.start();
+        startGame();
         PowerUpManager.setSinglePanel(this);
     }
 
@@ -71,8 +110,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
         loadGame(loadedData); // Tải game
 
-        Timer timer = new Timer(10, this); // 100 fps
-        timer.start();
+        initGame();
+        startGame();
         PowerUpManager.setSinglePanel(this);
     }
 
@@ -160,8 +199,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         collisionInfo = new CollisionInfo(ball, paddle, bricks);
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
+    public void update() {
         if (!gameOver) {
             if (leftPressed)
                 paddle.moveLeft();
@@ -199,7 +237,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 checkGameOver();
                 if (lives > 0) {
                     // reset ball position in the paddle
-                    ball.reset((int)(paddle.getX() + paddle.getWidth() / 2.0), (int)(paddle.getY() - ball.getRadius() - 1));
+                    ball.reset((int)(paddle.getX() + paddle.getWidth() / 2.0),
+                                (int)(paddle.getY() - ball.getRadius() - 1));
                 }
             }
 
@@ -238,7 +277,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         }
         updatePowerUps();
         updateLasers();  // Thêm
-        repaint();
     }
 
     @Override
@@ -317,7 +355,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         if (k == KeyEvent.VK_SPACE)
             ball.launch(); // Press space to launch the ball
         if (k == KeyEvent.VK_R && gameOver) {
+            stopGame();
             initGame();
+            startGame();
         }
         if (k == KeyEvent.VK_S) { // Change levels
             level++;
@@ -521,7 +561,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     private void handleSaveGame() {
         // 1. Kiểm tra điều kiện lưu
         if (gameOver || win) {
-            System.out.println("Lưu Game: Thất bại. Game đã kết thúc.");
+            System.out.println("Save game: Failed. Game is over.");
             return;
         }
 

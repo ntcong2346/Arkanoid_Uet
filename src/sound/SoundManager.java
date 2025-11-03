@@ -5,8 +5,11 @@ import menu.MenuPanel;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineEvent;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Singleton class for SFX.
@@ -15,6 +18,9 @@ public class SoundManager {
     private static SoundManager instance;
     private final HashMap<String, URL> soundMap = new HashMap<>();
     private Clip musicClip;
+
+    // Thread pool for sounds
+    private final ExecutorService soundExecutor = Executors.newCachedThreadPool();
 
     private SoundManager() {}
 
@@ -40,71 +46,73 @@ public class SoundManager {
         soundMap.put("bg_music", loadSound("/assets/sound/bg_music.wav"));
     }
 
-    private URL loadSound(String... paths) {
-        for (String path : paths) {
-            URL url = getClass().getResource(path);
-            if (url != null) {
-                System.out.println("Loaded: " + path);
-                return url;
-            }
+    private URL loadSound(String path) {
+        URL url = getClass().getResource(path);
+        if (url != null) {
+            System.out.println("Sound loaded: " + path);
+            return url;
         }
-        System.err.println("Failed to load sound from paths: " + String.join(", ", paths));
+        System.err.println("Sound failed to load: " + path);
         return null;
     }
 
-    public void play(String path) {
-        // Kiểm tra setting âm thanh
-        if (!MenuPanel.soundOn) {
+    /**
+     * Play SFX.
+     */
+    public void play(String key) {
+        if (!MenuPanel.soundOn) return;
+
+        URL url = soundMap.get(key);
+        if (url == null) {
+            System.err.println("Sound not found: " + key);
             return;
         }
 
-        try {
-            URL url = soundMap.get(path);
-            if (url == null) {
-                System.err.println("Sound not found: " + path);
-                return;
+        soundExecutor.submit(() -> {
+            try {
+                AudioInputStream stream = AudioSystem.getAudioInputStream(url);
+                Clip clip = AudioSystem.getClip();
+                clip.open(stream);
+
+                clip.addLineListener(event -> {
+                    if (event.getType() == LineEvent.Type.STOP) {
+                        clip.close();
+                    }
+                });
+
+                clip.start();
+            } catch (Exception e) {
+                System.err.println("Error playing sound '" + key + "': " + e.getMessage());
             }
-
-            AudioInputStream stream = AudioSystem.getAudioInputStream(url);
-            Clip clip = AudioSystem.getClip();
-
-            clip.open(stream);
-
-            // Tự động đóng clip sau khi phát xong để tránh memory leak
-            clip.addLineListener(event -> {
-                if (event.getType() == javax.sound.sampled.LineEvent.Type.STOP) {
-                    clip.close();
-                }
-            });
-
-            clip.start();
-
-        } catch (Exception e) {
-            System.err.println("Error playing sound '" + path + "': " + e.getMessage());
-        }
+        });
     }
 
-    public void playMusic(String path) {
+    /**
+     * Play music.
+     */
+    public synchronized void playMusic(String key) {
         stopMusic();
         if (!MenuPanel.soundOn) return;
 
         try {
-            URL url = soundMap.get(path);
+            URL url = soundMap.get(key);
             if (url == null) {
-                System.err.println("Music not found: " + path);
+                System.err.println("Music not found: " + key);
                 return;
             }
+
             AudioInputStream ais = AudioSystem.getAudioInputStream(url);
             musicClip = AudioSystem.getClip();
             musicClip.open(ais);
             musicClip.loop(Clip.LOOP_CONTINUOUSLY);
             musicClip.start();
+
         } catch (Exception e) {
-            System.err.println("Failed to play music: " + path);
+            System.err.println("Failed to play music: " + key + " – " + e.getMessage());
         }
     }
 
-    public void stopMusic() {
+    public synchronized void stopMusic() {
         if (musicClip != null) {
             musicClip.stop();
             musicClip.close();
@@ -112,7 +120,7 @@ public class SoundManager {
         }
     }
 
-    public boolean isPlaying() {
-        return false;
+    public synchronized boolean isMusicPlaying() {
+        return musicClip != null && musicClip.isRunning();
     }
 }

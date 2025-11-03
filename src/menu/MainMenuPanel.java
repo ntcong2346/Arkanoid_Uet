@@ -22,7 +22,7 @@ public class MainMenuPanel extends JPanel {
 
         if (MenuPanel.soundOn) {
             // Đảm bảo nhạc nền được chạy nếu đang bật và chưa chạy
-            if (!SoundManager.getInstance().isPlaying()) {
+            if (!SoundManager.getInstance().isMusicPlaying()) {
                 SoundManager.getInstance().playMusic("bg_music");
             }
         } else {
@@ -59,7 +59,7 @@ public class MainMenuPanel extends JPanel {
         gbc.gridy++;
         add(leaderboardButton, gbc);
 
-        JButton infoButton = new JButton("Info");
+        JButton infoButton = new JButton("How To Play");
         styleButton(infoButton);
         gbc.gridy++;
         add(infoButton, gbc);
@@ -107,12 +107,12 @@ public class MainMenuPanel extends JPanel {
         String info = "<html><p style='width: 300px; text-align: center;'>" +
                 "<b>How to Play:</b> Use left/right arrow keys or A/D to move the paddle.<br>" +
                 "Objective: Destroy all bricks to win levels.<br>" +
-                "Utility:</b> Press F5 to create a save file and keep your current game state.<br><br>" +
+                "Utility:</b> Press F5 to save your current game state.<br><br>" +
                 "</p></html>";
         JOptionPane.showMessageDialog(
                 menuFrame,
                 info,
-                "Game Information",
+                "Instructions",
                 JOptionPane.INFORMATION_MESSAGE
         );
     }

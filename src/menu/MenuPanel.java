@@ -17,12 +17,12 @@ public class MenuPanel extends JPanel {
     public JCheckBox soundCheck;
 
     // Loai bỏ JComboBox, thay bằng JPanel chứa JRadioButton
-    private JPanel ballSpeedPanel;
-    private JPanel ballSizePanel;
-    private JPanel paddleSpeedPanel;
-    private JPanel modePanel;
+    private final JPanel ballSpeedPanel;
+    private final JPanel ballSizePanel;
+    private final JPanel paddleSpeedPanel;
+    private final JPanel modePanel;
 
-    private JButton backButton;
+    private final JButton backButton;
 
     // Khai báo ButtonGroup để quản lý lựa chọn
     private ButtonGroup ballSpeedGroup;
@@ -157,7 +157,7 @@ public class MenuPanel extends JPanel {
             MenuPanel.soundOn = isSelected;
 
             if (isSelected) {
-                if (!SoundManager.getInstance().isPlaying()) {
+                if (!SoundManager.getInstance().isMusicPlaying()) {
                     SoundManager.getInstance().playMusic("bg_music");
                 }
             } else {
@@ -174,7 +174,7 @@ public class MenuPanel extends JPanel {
         });
 
         // Xử lý nhạc nền khi Settings Panel được mở
-        if (MenuPanel.soundOn && !SoundManager.getInstance().isPlaying()) {
+        if (MenuPanel.soundOn && !SoundManager.getInstance().isMusicPlaying()) {
             SoundManager.getInstance().playMusic("bg_music");
         }
         // Loại bỏ đoạn else và khai báo startButton thừa ở cuối constructor
@@ -268,11 +268,11 @@ public class MenuPanel extends JPanel {
 
         boolean validName = false;
         while (!validName) {
-            String name = JOptionPane.showInputDialog(menuFrame, "Nhập tên của bạn:", "Tên người chơi", JOptionPane.QUESTION_MESSAGE);
+            String name = JOptionPane.showInputDialog(menuFrame, "Enter username:", "Player's name", JOptionPane.QUESTION_MESSAGE);
             if (name == null) {
                 return;
             } else if (name.trim().isEmpty()) {
-                JOptionPane.showMessageDialog(menuFrame, "Tên không được để trống! Vui lòng nhập tên của bạn.", "Lỗi", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(menuFrame, "Player's name cannot be left empty.", "Error", JOptionPane.WARNING_MESSAGE);
             } else {
                 playerName = name.trim();
                 validName = true;
@@ -299,8 +299,8 @@ public class MenuPanel extends JPanel {
         if (!GameSaverLoader.saveFileExists()) {
             JOptionPane.showMessageDialog(
                     menuFrame,
-                    "Chưa có file save game nào được tạo.",
-                    "Lỗi Load Game",
+                    "No save files were created.",
+                    "Failed to load game.",
                     JOptionPane.WARNING_MESSAGE
             );
             return;
@@ -311,8 +311,8 @@ public class MenuPanel extends JPanel {
         if (loadedData == null) {
             JOptionPane.showMessageDialog(
                     menuFrame,
-                    "Lỗi đọc file save.",
-                    "Lỗi Load Game",
+                    "Error saving game.",
+                    "Error loading game.",
                     JOptionPane.ERROR_MESSAGE
             );
             return;
@@ -324,16 +324,16 @@ public class MenuPanel extends JPanel {
         final String paddleSpeedStr = loadedData.getSettingString("paddleSpeed", loadedData.getPaddleSpeed());
         final String gameModeStr = (loadedData.getGameMode() == 1) ? "Co-op" : "Single Player";
 
-        final String message = "Bạn có chắc muốn chơi lại lần trước?\n\n"
-                + "Người chơi: " + loadedData.getPlayerName() + " (" + gameModeStr + ")\n"
+        final String message = "Do you want to continue your last game?\n\n"
+                + "Player: " + loadedData.getPlayerName() + " (" + gameModeStr + ")\n"
                 + "Level: " + loadedData.getLevel() + "\n"
                 + "Lives: " + loadedData.getLives() + "\n"
                 + "Score: " + loadedData.getScore() + "\n"
-                + "Tổng gạch còn lại: " + loadedData.getBricksState().size() + "\n\n"
-                + "Cài đặt của lần trước:\n"
-                + "- Tốc độ bóng: " + ballSpeedStr + "\n"
-                + "- Kích thước bóng: " + ballSizeStr + "\n"
-                + "- Tốc độ Paddle: " + paddleSpeedStr;
+                + "Bricks left: " + loadedData.getBricksState().size() + "\n\n"
+                + "Previous settings:\n"
+                + "- Ball speed: " + ballSpeedStr + "\n"
+                + "- Ball size: " + ballSizeStr + "\n"
+                + "- Paddle speed: " + paddleSpeedStr;
 
         final int result = JOptionPane.showConfirmDialog(
                 menuFrame,
