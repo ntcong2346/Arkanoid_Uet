@@ -7,6 +7,7 @@ import java.awt.*;
 public class Assets {
     public static Image background;
     public static Image backgroundMenu;
+    public static Image backgroundSetting;
     public static Image paddle;
     public static Image ball;
     public static Image brick;
@@ -28,11 +29,13 @@ public class Assets {
     public static Image extraLifePowerUp;
     public static Image lifeDownPowerUp;
     public static Image widePaddlePowerUp;
+    public static Image backgroundSettings;
 
     // gọi hàm này 1 lần khi khởi động game
     public static void load() {
         try {
             backgroundMenu      = ImageIO.read(Assets.class.getResource("/assets/Background1.png"));
+            backgroundSettings  =  ImageIO.read(Assets.class.getResource("/assets/Background3.png"));
             background          = ImageIO.read(Assets.class.getResource("/assets/Background2.png"));
             paddleNormal        = ImageIO.read(Assets.class.getResource("/assets/Player.png"));
             paddleGlow          = ImageIO.read(Assets.class.getResource("/assets/Player_flash.png"));

@@ -111,4 +111,8 @@ public class SoundManager {
             musicClip = null;
         }
     }
+
+    public boolean isPlaying() {
+        return false;
+    }
 }

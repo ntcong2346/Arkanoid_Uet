@@ -4,11 +4,12 @@ import javax.swing.*;
 
 public class MenuFrame extends JFrame {
     public MenuFrame() {
-        setTitle("Arkanoid Pro 2025 - MENU");
+        setTitle("Arkanoid Pro 2025 - MAIN MENU");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(400, 400);
+        setSize(800, 600);
         setLocationRelativeTo(null);
         setResizable(false);
-        setContentPane(new MenuPanel(this));
+        // Changed to load the new MainMenuPanel
+        setContentPane(new MainMenuPanel(this));
     }
 }
