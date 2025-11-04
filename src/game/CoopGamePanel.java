@@ -21,7 +21,7 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CoopGamePanel extends JPanel implements ActionListener, KeyListener {
+public class CoopGamePanel extends JPanel implements KeyListener {
     public static final int WIDTH = 800;
     public static final int HEIGHT = 600;
 
@@ -48,6 +48,47 @@ public class CoopGamePanel extends JPanel implements ActionListener, KeyListener
     private String saveMessage = null;
     private static final int MESSAGE_DURATION_MS = 2000; // 2 giây
 
+    // Xử lí đa luồng
+    private Thread gameThread;
+    private volatile boolean gameRunning = false;
+    private final int FPS = 100;
+
+    public void startGame() {
+        if (gameThread == null || !gameThread.isAlive()) {
+            gameRunning = true;
+            gameThread = new Thread(this::gameLoop);
+            gameThread.start();
+        }
+    }
+
+    private void gameLoop() {
+        long lastTime = System.nanoTime();
+        double nsPerTick = 1_000_000_000.0 / FPS;
+        double delta = 0;
+
+        while (gameRunning) {
+            long now = System.nanoTime();
+            delta += (now - lastTime) / nsPerTick;
+            lastTime = now;
+
+            if (delta >= 1) {
+                update();
+                SwingUtilities.invokeLater(this::repaint);
+                delta--;
+            }
+
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+    }
+
+    public void stopGame() {
+        gameRunning = false;
+    }
+
     public CoopGamePanel() {
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
         setBackground(Color.BLACK);
@@ -55,13 +96,11 @@ public class CoopGamePanel extends JPanel implements ActionListener, KeyListener
         addKeyListener(this);
 
         initGame();
-
-        Timer timer = new Timer(10, this);
-        timer.start();
+        startGame();
         PowerUpManager.setCoopPanel(this);
     }
 
-    // --- THÊM MỚI: Constructor dùng cho LOAD GAME ---
+    // Constructor dùng cho LOAD GAME
     public CoopGamePanel(final GameSaveData loadedData) {
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
         setBackground(Color.BLACK);
@@ -69,9 +108,7 @@ public class CoopGamePanel extends JPanel implements ActionListener, KeyListener
         addKeyListener(this);
 
         loadGame(loadedData); // Tải game
-
-        Timer timer = new Timer(10, this);
-        timer.start();
+        startGame();
         PowerUpManager.setCoopPanel(this);
     }
 
@@ -157,8 +194,7 @@ public class CoopGamePanel extends JPanel implements ActionListener, KeyListener
         collisionInfo = new CollisionInfo(ball, paddle1, bricks);
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
+    public void update() {
         if (!gameOver) {
             // Paddle movement
             if (leftPressed) paddle1.moveLeft();
@@ -535,9 +571,10 @@ public class CoopGamePanel extends JPanel implements ActionListener, KeyListener
         }
 
         // Thực hiện lưu game
-        GameSaveData saveData = createSaveData();
-        GameSaverLoader.saveGame(saveData);
-
+        synchronized(this) {
+            GameSaveData saveData = createSaveData();
+            GameSaverLoader.saveGame(saveData);
+        }
         // Đặt nội dung thông báo
         saveMessage = "Game Saved!";
 

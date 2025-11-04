@@ -51,7 +51,7 @@ public class GamePanel extends JPanel implements KeyListener {
     private final int FPS = 100;
 
     public void startGame() {
-        if(gameThread == null || !gameThread.isAlive()) {
+        if (gameThread == null || !gameThread.isAlive()) {
             gameRunning = true;
             gameThread = new Thread(this::gameLoop);
             gameThread.start();
@@ -109,8 +109,6 @@ public class GamePanel extends JPanel implements KeyListener {
         this.addKeyListener(this);
 
         loadGame(loadedData); // Tải game
-
-        initGame();
         startGame();
         PowerUpManager.setSinglePanel(this);
     }
@@ -566,8 +564,10 @@ public class GamePanel extends JPanel implements KeyListener {
         }
 
         // Thực hiện lưu game
-        GameSaveData saveData = createSaveData();
-        GameSaverLoader.saveGame(saveData);
+        synchronized(this) {
+            GameSaveData saveData = createSaveData();
+            GameSaverLoader.saveGame(saveData);
+        }
 
         // Đặt nội dung thông báo
         saveMessage = "Game Saved!";
