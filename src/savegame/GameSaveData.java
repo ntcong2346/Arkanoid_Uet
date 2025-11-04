@@ -48,7 +48,7 @@ public class GameSaveData implements Serializable {
         this.ballSize = ballSize;
     }
 
-    // Constructor cho Coop Player (Thêm mới)
+    // Constructor cho Coop Player
     public GameSaveData(String playerName, int gameMode, int level, int lives, int score, double paddle1X, double paddle2X,
                         ArrayList<Brick> bricksState, int paddleSpeed, int ballSpeed, int ballSize) {
         this.playerName = playerName;

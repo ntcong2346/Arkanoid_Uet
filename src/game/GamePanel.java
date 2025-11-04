@@ -30,7 +30,7 @@ public class GamePanel extends JPanel implements KeyListener {
     private ArrayList<Brick> bricks;
     private CollisionInfo collisionInfo;
 
-    /** List of active power-ups falling from destroyed bricks. */
+    /** Danh sách các power-ups đang hoạt động rơi ra từ gạch bị phá hủy */
     private final List<PowerUp> powerUps = new ArrayList<>();
     private final List<Laser> lasers = new ArrayList<>();  // Thêm
 
@@ -40,7 +40,7 @@ public class GamePanel extends JPanel implements KeyListener {
     private boolean win = false;
     private int level = 1; // Thêm biến level
 
-    // --- THÊM MỚI CHO THÔNG BÁO SAVE ---
+    // Biến cho thông báo Save Game
     private Timer messageTimer;
     private String saveMessage = null;
     private static final int MESSAGE_DURATION_MS = 2000; // 2 giây
@@ -97,7 +97,7 @@ public class GamePanel extends JPanel implements KeyListener {
         PowerUpManager.setSinglePanel(this);
     }
 
-    // --- THÊM MỚI: Constructor dùng cho LOAD GAME ---
+    // Constructor dùng cho Load Game
     /**
      * Constructor dùng để khởi tạo game từ dữ liệu đã lưu.
      * @param loadedData Đối tượng GameSaveData đã được tải.
@@ -158,7 +158,7 @@ public class GamePanel extends JPanel implements KeyListener {
      * @return Đối tượng GameSaveData.
      */
     public final GameSaveData createSaveData() {
-        // --- LỌC DANH SÁCH GẠCH ---
+        // Lọc danh sách gạch
         final ArrayList<Brick> remainingBricks = new ArrayList<>();
         for (final Brick b : bricks) {
             if (!b.isDestroyed()) {
@@ -221,10 +221,10 @@ public class GamePanel extends JPanel implements KeyListener {
             if (ball.getY() > HEIGHT) {
                 lives--;
 
-                // TẮT LASER
+                // Tắt Laser
                 paddle.deactivateLaser();
 
-                // TẮT WIDE PADDLE
+                // Tắt Wide Paddle
                 if (paddle.isWideActive()) {
                     paddle.deactivateWidePaddle();
                 }
@@ -299,7 +299,7 @@ public class GamePanel extends JPanel implements KeyListener {
         g.drawString("Lives: " + lives, WIDTH - 100, 20);
         g.drawString("Level: " + level, WIDTH / 2 - 40, 40);
 
-        // THAY ĐỔI CHÍNH: Score to Beat / High Score
+        // Score to Beat / High Score
         ArrayList<LeaderboardEntry> top = LeaderboardManager.getInstance().getTopSinglePlayerEntries();
         int scoreToBeat = LeaderboardManager.getInstance().getScoreToBeat(score, false);
         boolean isTop1 = !top.isEmpty() && score >= top.get(0).getSinglePlayerScore();
@@ -335,7 +335,6 @@ public class GamePanel extends JPanel implements KeyListener {
         }
 
         if (saveMessage != null) {
-            // Cài đặt Font:
             g.setFont(new Font("Arial", Font.BOLD, 18));
             g.setColor(Color.GREEN.darker());
             g.drawString(saveMessage, 9, 43);
@@ -365,10 +364,10 @@ public class GamePanel extends JPanel implements KeyListener {
             createLevel(level);
             ball.reset(paddle.getX() + paddle.getWidth() / 2.0, paddle.getY() - ball.getRadius() - 1);
 
-            // TẮT LASER
+            // Tắt Laser
             paddle.deactivateLaser();
 
-            // TẮT WIDE PADDLE
+            // Tắt Wide Paddle
             if (paddle.isWideActive()) {
                 paddle.deactivateWidePaddle();
             }
@@ -393,9 +392,9 @@ public class GamePanel extends JPanel implements KeyListener {
     public void keyTyped(KeyEvent e) {}
 
     /**
-     * Adds a power-up to the active power-ups list.
+     * Thêm một power-up vào danh sách các power-up đang hoạt động.
      *
-     * @param powerUp the power-up to add
+     * @param powerUp power-up cần thêm
      */
     public void addPowerUp(PowerUp powerUp) {
         if (powerUp != null) {
@@ -404,7 +403,7 @@ public class GamePanel extends JPanel implements KeyListener {
     }
 
     /**
-     * Updates all active power-ups: movement, collision detection, and removal.
+     * Cập nhật tất cả các power-up đang hoạt động và xử lý va chạm với paddle.
      */
     private void updatePowerUps() {
         for (int i = powerUps.size() - 1; i >= 0; i--) {
@@ -440,18 +439,12 @@ public class GamePanel extends JPanel implements KeyListener {
         lives += amount;
     }
 
-    /**
-     * Shoots a laser from the specified coordinates.
-     */
     public void shootLaserFromPaddle(int x, int y) {
         if (paddle.isLaserActive()) {
             lasers.add(new Laser(x, y));
         }
     }
 
-    /**
-     * Updates all active lasers and handles collisions with bricks.
-     */
     private void updateLasers() {
         for (int i = lasers.size() - 1; i >= 0; i--) {
             Laser laser = lasers.get(i);
@@ -473,9 +466,6 @@ public class GamePanel extends JPanel implements KeyListener {
         }
     }
 
-    /**
-     * Renders all active lasers.
-     */
     private void renderLasers(Graphics g) {
         for (Laser laser : lasers) {
             laser.render(g);

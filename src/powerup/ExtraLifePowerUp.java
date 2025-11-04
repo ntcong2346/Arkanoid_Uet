@@ -8,7 +8,7 @@ import java.awt.Graphics;
 /**
  * Power-up that grants the player one additional life.
  *
- * <p>This power-up has no duration and immediately increases the player's life count
+ * <p>This power-up has no duration and immediately increases the player's life count by 1
  * by 1 when collected.</p>
  */
 public class ExtraLifePowerUp extends PowerUp {

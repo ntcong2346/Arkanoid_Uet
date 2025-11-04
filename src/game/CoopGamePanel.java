@@ -31,7 +31,7 @@ public class CoopGamePanel extends JPanel implements KeyListener {
     private ArrayList<Brick> bricks;
     private CollisionInfo collisionInfo;
 
-    /** List of active power-ups falling from destroyed bricks. */
+    /** Danh sách các power-ups đang hoạt động rơi ra từ gạch bị phá hủy */
     private final List<PowerUp> powerUps = new ArrayList<>();
 
     private final List<Laser> lasers = new ArrayList<>();  // Thêm
@@ -43,7 +43,7 @@ public class CoopGamePanel extends JPanel implements KeyListener {
     private boolean win = false;
     private int level = 1;
 
-    // --- THÊM MỚI CHO THÔNG BÁO SAVE ---
+    // Biến cho thông báo Save Game
     private Timer messageTimer;
     private String saveMessage = null;
     private static final int MESSAGE_DURATION_MS = 2000; // 2 giây
@@ -100,7 +100,7 @@ public class CoopGamePanel extends JPanel implements KeyListener {
         PowerUpManager.setCoopPanel(this);
     }
 
-    // Constructor dùng cho LOAD GAME
+    // Constructor dùng cho Load Game
     public CoopGamePanel(final GameSaveData loadedData) {
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
         setBackground(Color.BLACK);
@@ -222,11 +222,11 @@ public class CoopGamePanel extends JPanel implements KeyListener {
             if (ball.getY() > HEIGHT) {
                 lives--;
 
-                // TẮT LASER
+                // Tắt Laser
                 paddle1.deactivateLaser();
                 paddle2.deactivateLaser();
 
-                // TẮT WIDE PADDLE
+                // Tắt Wide Paddle
                 if (paddle1.isWideActive()) {
                     paddle1.deactivateWidePaddle();
                 }
@@ -255,11 +255,11 @@ public class CoopGamePanel extends JPanel implements KeyListener {
             if (allDestroyed) {
                 level++;
 
-                // TẮT LASER
+                // Tắt Laser
                 paddle1.deactivateLaser();
                 paddle2.deactivateLaser();
 
-                // TẮT WIDE PADDLE
+                // Tắt Wide Paddle
                 if (paddle1.isWideActive()) {
                     paddle1.deactivateWidePaddle();
                 }
@@ -307,7 +307,7 @@ public class CoopGamePanel extends JPanel implements KeyListener {
         g.drawString("Lives: " + lives, WIDTH - 100, 20);
         g.drawString("Level: " + level, WIDTH/2 - 40, 40);
 
-        // THAY ĐỔI CHÍNH: Score to Beat / High Score
+        // Score to Beat / High Score
         ArrayList<LeaderboardEntry> top = LeaderboardManager.getInstance().getTopCoopEntries();
         int scoreToBeat = LeaderboardManager.getInstance().getScoreToBeat(score, true);
         boolean isTop1 = !top.isEmpty() && score >= top.get(0).getCoopScore();
@@ -342,7 +342,6 @@ public class CoopGamePanel extends JPanel implements KeyListener {
         }
 
         if (saveMessage != null) {
-            // Cài đặt Font:
             g.setFont(new Font("Arial", Font.BOLD, 18));
             g.setColor(Color.GREEN.darker());
             g.drawString(saveMessage, 9, 43);
@@ -367,11 +366,11 @@ public class CoopGamePanel extends JPanel implements KeyListener {
             createLevel(level);
             ball.reset(paddle1.getX() + paddle1.getWidth() / 2.0 - ball.getDiameter() / 2.0, paddle1.getY() - ball.getDiameter() - 2);
 
-            // TẮT LASER
+            // Tắt Laser
             paddle1.deactivateLaser();
             paddle2.deactivateLaser();
 
-            // TẮT WIDE PADDLE
+            // Tắt Wide Paddle
             if (paddle1.isWideActive()) {
                 paddle1.deactivateWidePaddle();
             }
@@ -399,9 +398,9 @@ public class CoopGamePanel extends JPanel implements KeyListener {
     public void keyTyped(KeyEvent e) {}
 
     /**
-     * Adds a power-up to the active power-ups list.
+     * Thêm một power-up vào danh sách các power-up đang hoạt động.
      *
-     * @param powerUp the power-up to add
+     * @param powerUp power-up cần thêm
      */
     public void addPowerUp(PowerUp powerUp) {
         if (powerUp != null) {
@@ -414,7 +413,7 @@ public class CoopGamePanel extends JPanel implements KeyListener {
     }
 
     /**
-     * Updates all active power-ups and handles paddle collisions.
+     * Cập nhật tất cả các power-up đang hoạt động và xử lý va chạm với paddle.
      */
     private void updatePowerUps() {
         for (int i = powerUps.size() - 1; i >= 0; i--) {
@@ -443,10 +442,10 @@ public class CoopGamePanel extends JPanel implements KeyListener {
     }
 
     /**
-     * Returns the paddle that the power-up collided with, or null if none.
+     * Trả về paddle mà power-up đã va chạm, hoặc trả về null nếu không va chạm.
      *
-     * @param powerUp the power-up to check
-     * @return the hit paddle, or null
+     * @param powerUp power-up cần kiểm tra
+     * @return paddle bị va chạm, hoặc null
      */
     private Paddle getHitPaddle(PowerUp powerUp) {
         if (powerUp.getBounds().intersects(paddle1.getBounds())) {

@@ -1,8 +1,7 @@
 package leaderboard;
 
 /**
- * Represents a single entry in the leaderboard.
- * Stores player name, scores for both game modes, and date.
+ * Mục lưu trữ tên người chơi, điểm số cho cả hai chế độ chơi, và ngày.
  */
 public class LeaderboardEntry {
     private final String playerName;
@@ -28,7 +27,7 @@ public class LeaderboardEntry {
     }
 
     /**
-     * Gets the highest score between single player and coop modes.
+     * Lấy điểm số cao nhất giữa chế độ Single và chế độ Co-op.
      */
     public int getHighestScore() {
         return Math.max(singlePlayerScore, coopScore);

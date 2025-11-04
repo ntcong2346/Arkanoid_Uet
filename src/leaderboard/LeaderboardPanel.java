@@ -15,13 +15,13 @@ public class LeaderboardPanel extends JPanel {
         buildUI();
     }
 
-    // XÂY DỰNG GIAO DIỆN
+    // Giao diện
     private void buildUI() {
         add(createTitleLabel(), BorderLayout.NORTH);
         add(createContentPanel(), BorderLayout.CENTER);
     }
 
-    // TITLE
+    // Title
     private JLabel createTitleLabel() {
         JLabel label = new JLabel("SCOREBOARD", SwingConstants.CENTER);
         label.setFont(new Font("Arial", Font.BOLD, 24));
@@ -30,7 +30,7 @@ public class LeaderboardPanel extends JPanel {
         return label;
     }
 
-    // NỘI DUNG CHÍNH
+    // Nội dung chính
     private JPanel createContentPanel() {
         JPanel panel = new JPanel(new GridLayout(1, 2, 20, 0));
         panel.setBackground(Color.BLACK);
@@ -42,7 +42,7 @@ public class LeaderboardPanel extends JPanel {
         return panel;
     }
 
-    // PANEL MỖI CHẾ ĐỘ
+    // Panel của mỗi chế độ
     private JPanel createModePanel(String title, boolean isSinglePlayer) {
         ArrayList<LeaderboardEntry> entries = isSinglePlayer
                 ? LeaderboardManager.getInstance().getTopSinglePlayerEntries()
@@ -58,7 +58,7 @@ public class LeaderboardPanel extends JPanel {
         return panel;
     }
 
-    // TIÊU ĐỀ CHẾ ĐỘ
+    // Tiêu đề chế độ
     private JLabel createModeTitle(String title) {
         JLabel label = new JLabel(title, SwingConstants.CENTER);
         label.setFont(new Font("Arial", Font.BOLD, 16));
@@ -69,7 +69,7 @@ public class LeaderboardPanel extends JPanel {
         return label;
     }
 
-    // TÁCH: DANH SÁCH ĐIỂM
+    // Danh sách điểm
     private JPanel createScoresList(ArrayList<LeaderboardEntry> entries, boolean isSinglePlayer) {
         JPanel panel = new JPanel(new GridLayout(5, 1, 0, 5));
         panel.setBackground(new Color(30, 30, 60));
@@ -81,7 +81,7 @@ public class LeaderboardPanel extends JPanel {
         return panel;
     }
 
-    // LABEL MỖI DÒNG
+    // Label mỗi dòng
     private JLabel createScoreLabel(int rank, ArrayList<LeaderboardEntry> entries, boolean isSinglePlayer) {
         String text;
         Color color;
@@ -102,7 +102,7 @@ public class LeaderboardPanel extends JPanel {
         return label;
     }
 
-    // HIỂN THỊ DIALOG
+    // Hiển thị Dialog
     public static void showLeaderboardDialog(Component parent) {
         JDialog dialog = new JDialog();
         dialog.setTitle("Scoreboard");

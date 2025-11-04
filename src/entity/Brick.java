@@ -72,10 +72,10 @@ public class Brick extends GameObject implements Serializable{
             destroyed = true;
             int totalScore = getScoreValue();
             if (type == EXPLOSIVE) {
-                // Add score from all bricks destroyed in the explosion zone
+                // Cộng điểm cho toàn bộ bricks bị phá hủy trong explosionZone
                 totalScore += explode(bricks);
             }
-            // GỌI HÀM THẢ POWER-UP KHI CHẮC CHẮN GẠCH BỊ PHÁ HỦY
+            // Gọi hàm thả PowerUp khi chắc chắn gạch bị phá hủy
             dropPowerUp();
 
             return totalScore;
@@ -94,7 +94,7 @@ public class Brick extends GameObject implements Serializable{
         );
 
         for (Brick b : bricks) {
-            // Check if there are breakable brick inside the zone for additional score
+            // Kiểm tra nếu có gạch phá hủy được ở trong explosionScore để cộng điểm
             if (b != this && !b.destroyed && b.type != UNBREAKABLE && explosionZone.intersects(b.getRect())) {
                 b.destroyed = true;
                 explosionScore += b.getScoreValue();
@@ -109,7 +109,7 @@ public class Brick extends GameObject implements Serializable{
     @Override
     public void render(Graphics g) {
         if (destroyed) return;
-        // Convert center-based back to top left for collision.
+        // Chuyển đổi từ tọa độ trung tâm trở lại tọa độ góc trên bên trái để kiểm tra va chạm
         int drawX = (int)getLeft();
         int drawY = (int)getTop();
         switch (type) {
@@ -135,10 +135,10 @@ public class Brick extends GameObject implements Serializable{
     }
 
     /**
-     * Drops a power-up from this destroyed brick with a 20% chance.
+     * 20% khả năng thả power-up ở trung tâm gạch bị phá hủy.
      */
     private void dropPowerUp() {
-        if (Math.random() < 0.2) { // 20% chance to drop
+        if (Math.random() < 0.2) { // 20%
             // Tính toán vị trí của Power-up (tâm gạch)
             int powerUpX = (int) this.x;
             int powerUpY = (int) this.y;

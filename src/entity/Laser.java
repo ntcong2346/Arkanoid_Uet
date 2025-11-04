@@ -5,16 +5,16 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 
 /**
- * Represents a laser shot by the paddle with laser power-up.
+ * Lớp vẽ Laser.
  */
 public class Laser extends MovableObject {
-    /** Vertical velocity in pixels per frame. */
+    /** Vận tốc theo phương thẳng đứng (tính bằng pixels trên mỗi khung hình). */
     private static final double VELOCITY_Y = -8.0;
 
-    /** Width of the laser. */
+    /** Chiều rộng của laser. */
     private static final int WIDTH = 4;
 
-    /** Height of the laser. */
+    /** Chiều cao của laser. */
     private static final int HEIGHT = 12;
 
     public Laser(int x, int y) {

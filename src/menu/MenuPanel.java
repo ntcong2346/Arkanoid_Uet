@@ -295,7 +295,7 @@ public class MenuPanel extends JPanel {
      * @param menuFrame
      */
     public void loadGame(JFrame menuFrame){
-        // 1. Kiểm tra sự tồn tại của file save
+        // Check if the save file exists
         if (!GameSaverLoader.saveFileExists()) {
             JOptionPane.showMessageDialog(
                     menuFrame,
@@ -306,7 +306,7 @@ public class MenuPanel extends JPanel {
             return;
         }
 
-        // 2. Tải dữ liệu để kiểm tra và hiển thị
+        // Load data for checking and display
         final GameSaveData loadedData = GameSaverLoader.loadGame();
         if (loadedData == null) {
             JOptionPane.showMessageDialog(
@@ -318,7 +318,7 @@ public class MenuPanel extends JPanel {
             return;
         }
 
-        // Xây dựng thông báo xác nhận
+        // Build confirmation message
         final String ballSpeedStr = loadedData.getSettingString("ballSpeed", loadedData.getBallSpeed());
         final String ballSizeStr = loadedData.getSettingString("ballSize", loadedData.getBallSize());
         final String paddleSpeedStr = loadedData.getSettingString("paddleSpeed", loadedData.getPaddleSpeed());
@@ -348,11 +348,11 @@ public class MenuPanel extends JPanel {
 
             menuFrame.dispose();
 
-            // Cập nhật biến tĩnh gameMode, playerName để đồng bộ với game đã tải
+            // Update static variables gameMode, playerName to synchronize with the loaded game
             MenuPanel.gameMode = loadedData.getGameMode();
             MenuPanel.playerName = loadedData.getPlayerName();
 
-            // Khởi tạo game với dữ liệu đã tải
+            // Initialize the game with loaded data
             if (loadedData.getGameMode() == 1) {
                 new GameFrame(new CoopGamePanel(loadedData));
             } else {
