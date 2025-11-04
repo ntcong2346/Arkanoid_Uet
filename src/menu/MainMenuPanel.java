@@ -21,12 +21,12 @@ public class MainMenuPanel extends JPanel {
         gbc.anchor = GridBagConstraints.CENTER;
 
         if (MenuPanel.soundOn) {
-            // Đảm bảo nhạc nền được chạy nếu đang bật và chưa chạy
+            // Play background music if enabled and not already running
             if (!SoundManager.getInstance().isMusicPlaying()) {
                 SoundManager.getInstance().playMusic("bg_music");
             }
         } else {
-            // Đảm bảo nhạc được tắt nếu cài đặt là tắt
+            // Stop music if setting is off
             SoundManager.getInstance().stopMusic();
         }
 
@@ -43,7 +43,6 @@ public class MainMenuPanel extends JPanel {
         gbc.gridy++;
         add(startButton, gbc);
 
-        // THÊM NÚT LOAD GAME
         JButton loadButton = new JButton("Load Game");
         styleButton(loadButton);
         gbc.gridy++;

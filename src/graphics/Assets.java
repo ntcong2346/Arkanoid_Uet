@@ -23,7 +23,7 @@ public class Assets {
     public static Image brickStrong1;
 
     /**
-     * PowerUp Image.
+     * Power-up Image.
      */
     public static Image laserPowerUp;
     public static Image extraLifePowerUp;
@@ -31,7 +31,12 @@ public class Assets {
     public static Image widePaddlePowerUp;
     public static Image backgroundSettings;
 
-    // gọi hàm này 1 lần khi khởi động game
+    /**
+     * Loads all game assets, including Images, from the resource files
+     * and assigns them to the corresponding static variables.
+     *
+     * This method must be called once during application initialization.
+     */
     public static void load() {
         try {
             backgroundMenu      = ImageIO.read(Assets.class.getResource("/assets/Background1.png"));
