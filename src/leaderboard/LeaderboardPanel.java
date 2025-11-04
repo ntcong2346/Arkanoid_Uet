@@ -1,4 +1,3 @@
-// LeaderboardPanel.java (OOP HOÀN CHỈNH)
 package leaderboard;
 
 import javax.swing.*;
