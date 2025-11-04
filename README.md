@@ -1,36 +1,25 @@
-Giới thiệu chung
-Arkanoid là một bản tái hiện hiện đại của trò chơi phá gạch kinh điển. Người chơi điều khiển một chiếc vợt (paddle) để nảy một quả bóng (ball) lên, nhằm phá hủy tất cả các viên gạch (bricks) trên màn hình để chuyển sang cấp độ tiếp theo.
+# Arkanoid Pro 2025
+Arkanoid Pro 2025 là 1 trò chơi thuộc thể loại Breakout phá gạch kinh điển. Mục tiêu là điều khiển thanh paddle để bật nảy quả bóng lên nhằm phá hủy tất cả các viên gạch trên màn hình qua nhiều cấp độ.
 
-Tính năng nổi bật
-Lối chơi kinh điển: Tái tạo chính xác cơ chế nảy bóng và phá gạch.
+<img width="795" height="588" alt="image" src="https://github.com/user-attachments/assets/01dcc174-a1b8-4c6e-89f9-13e6772cfc35" />
 
-Nhiều cấp độ: Bao gồm 5 cấp độ thử thách khác nhau.
+<img width="794" height="590" alt="image" src="https://github.com/user-attachments/assets/b08ac037-5073-4b97-9ff8-d6706c0926d6" />
 
-Power-ups đa dạng: Hỗ trợ người chơi với các vật phẩm rơi xuống như:
+- Thể loại: Breakout
+- Plaform: Windows
+- Ngôn ngữ lập trình: Java
+## Cách tải và chơi
+- Tải file zip trên Github repository này về, giải nén và chạy qua <a href="https://www.jetbrains.com/idea/" target="_blank">Intellij IDEA</a> để xem source code & chơi game.
+## Tính năng nổi bật
+- Lối chơi kinh điển: Cơ chế nảy bóng và phá gạch với xử lí va chạm mượt mà và chuẩn xác.
+- Nhiều cấp độ: Bao gồm 5 levels thử thách khác nhau, hỗ trợ tính năng chơi đôi phối hợp 2 người chơi.
+- Power-ups đa dạng: Hỗ trợ người chơi với các vật phẩm rơi xuống như hồi máu, súng laser, tăng kích thước thanh...
+- Vật thể tùy biến: Có thể tùy chỉnh kích thước, tốc độ bóng phù hợp, nhiều loại gạch đa dạng để phá hủy với các chỉ số khác nhau.
 
-Tăng kích thước vợt.
-
-Đạn laze (Laser).
-
-Mạng thêm (Extra Life).
-
-Giảm mạng (Life Down).
-
-Ngoài các viên gạch tiêu chuẩn (phá hủy sau một lần chạm), trò chơi còn có các loại gạch đặc biệt sau:
-
-Gạch nổ lan xung quanh (Explosive)
-
-Gạch không thể bị phá vỡ (Unbreakable)
-
-Gạch mạnh (Strong brick) (Phải đập nhiều lần mới vỡ)
-
+## Biểu đồ UML mô tả cấu trúc game
 <img width="1852" height="1085" alt="Image" src="https://github.com/user-attachments/assets/bac507ae-a863-412c-a9f8-4f042cdb3e71" />
-Biểu đồ UML của Game
 
-Các thành viên và công việc:
-
-Nguyễn Thế Công (Trưởng nhóm): Thiết kế GamePanel, CoopGamePanel, UI/UX Design
-
-Dương Tuấn Anh: Thiết kế GameObject, MovableObject, Ball, Brick, Xử lý va chạm
-
-Bùi Quý Phúc: PowerUp, Menu, Paddle
+## Các lập trình viên trong dự án và công việc:
+- Nguyễn Thế Công (Trưởng nhóm): Thiết kế GamePanel, CoopGamePanel, Brick, UI/Menu Design, Assets.
+- Dương Tuấn Anh: Thiết kế GameObject, MovableObject, Ball, Collision, SFX, Multithread, UML.
+- Bùi Quý Phúc: Thiết kế Paddle, Laser, Power Ups, Save/Load Game, Leaderboard.
