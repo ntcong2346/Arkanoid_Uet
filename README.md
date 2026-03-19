@@ -1,4 +1,4 @@
-<h1 align="center">Arkanoid Pro 2025</h1>
+<h1 align="center">Arkanoid </h1>
 
 <p align="center">
   <strong>A modern, high-performance take on the classic Breakout genre.</strong><br>
