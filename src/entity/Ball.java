@@ -43,7 +43,7 @@ public class Ball extends MovableObject implements Serializable{
     }
 
     public void move() {
-        if (inMotion) {
+        if (inMotion) { // Fixed timestep -> Avoid ball goes through wall.
             x += dx;
             y += dy;
         }

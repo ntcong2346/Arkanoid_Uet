@@ -40,7 +40,7 @@ public class Assets {
     public static void load() {
         try {
             backgroundMenu      = ImageIO.read(Assets.class.getResource("/assets/Background1.png"));
-            backgroundSettings  =  ImageIO.read(Assets.class.getResource("/assets/Background3.png"));
+            backgroundSettings  = ImageIO.read(Assets.class.getResource("/assets/Background3.png"));
             background          = ImageIO.read(Assets.class.getResource("/assets/Background2.png"));
             paddleNormal        = ImageIO.read(Assets.class.getResource("/assets/Player.png"));
             paddleGlow          = ImageIO.read(Assets.class.getResource("/assets/Player_flash.png"));

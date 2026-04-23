@@ -58,7 +58,7 @@ public class CollisionInfo {
      */
     private void handleBallCollision(Paddle p) {
         // Compute ball's hit location on paddle.
-        // Normalize values between -1 and 1 to determine the position.
+        // Normalize values between -1 and 1 to determine the position.`
         // Formula: (ball position - paddle middle position) / (paddle / 2).
         // -1 = ball hit left.
         // 0 = ball hit middle.

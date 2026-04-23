@@ -76,7 +76,7 @@ public class Paddle extends MovableObject implements Serializable{
         }, LASER_DURATION_MS);
     }
 
-    // Logic cho Widle Paddle
+    // Logic cho Wide Paddle
     public void activateWidePaddle() {
         if (!isWideActive) {
             isWideActive = true;

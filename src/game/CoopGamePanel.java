@@ -21,6 +21,8 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static graphics.Assets.paddle;
+
 public class CoopGamePanel extends JPanel implements KeyListener {
     public static final int WIDTH = 800;
     public static final int HEIGHT = 600;
@@ -39,8 +41,8 @@ public class CoopGamePanel extends JPanel implements KeyListener {
     private boolean leftPressed = false, rightPressed = false;
     private boolean aPressed = false, dPressed = false;
     private int score = 0, lives = 3;
-    private boolean gameOver = false;
-    private boolean win = false;
+    private volatile boolean gameOver = false;
+    private volatile boolean win = false;
     private int level = 1;
 
     // Biến cho thông báo Save Game
@@ -87,6 +89,11 @@ public class CoopGamePanel extends JPanel implements KeyListener {
 
     public void stopGame() {
         gameRunning = false;
+        try {
+            if (gameThread != null) gameThread.join();
+        } catch (InterruptedException ignored) {
+            Thread.currentThread().interrupt();
+        }
     }
 
     public CoopGamePanel() {
@@ -357,7 +364,11 @@ public class CoopGamePanel extends JPanel implements KeyListener {
         if (k == KeyEvent.VK_A) aPressed = true;
         if (k == KeyEvent.VK_D) dPressed = true;
         if (k == KeyEvent.VK_SPACE) ball.launch();
-        if (k == KeyEvent.VK_R && gameOver) initGame();
+        if (k == KeyEvent.VK_R && gameOver) {
+            stopGame();
+            initGame();
+            startGame();
+        }
         if (k == KeyEvent.VK_S) { // Cheat: chuyển vòng
             level++;
             score = 0;

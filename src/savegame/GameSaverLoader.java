@@ -42,8 +42,8 @@ public final class GameSaverLoader {
      * @return Đối tượng GameSaveData đã tải, hoặc null nếu lỗi/không tìm thấy file.
      */
     public static final GameSaveData loadGame() {
-        try (FileInputStream fileIn = new FileInputStream(SAVE_FILE_NAME); // Sửa lỗi: Bỏ thừa 'new'
-             ObjectInputStream objectIn = new ObjectInputStream(fileIn)) { // Sửa lỗi: Bỏ thừa 'new'
+        try (FileInputStream fileIn = new FileInputStream(SAVE_FILE_NAME); // Bỏ thừa 'new'
+             ObjectInputStream objectIn = new ObjectInputStream(fileIn)) {
 
             // Ép kiểu đối tượng đọc được thành GameSaveData
             final GameSaveData loadedData = (GameSaveData) objectIn.readObject();

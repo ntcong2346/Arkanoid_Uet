@@ -21,6 +21,9 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class GamePanel quản lý logic game, đồ họa.
+ */
 public class GamePanel extends JPanel implements KeyListener {
     public static final int WIDTH = 800;
     public static final int HEIGHT = 600;
@@ -36,8 +39,8 @@ public class GamePanel extends JPanel implements KeyListener {
 
     private boolean leftPressed = false, rightPressed = false;
     private int score = 0, lives = 3;
-    private boolean gameOver = false;
-    private boolean win = false;
+    private volatile boolean gameOver = false;
+    private volatile boolean win = false;
     private int level = 1; // Thêm biến level
 
     // Biến cho thông báo Save Game
@@ -50,6 +53,9 @@ public class GamePanel extends JPanel implements KeyListener {
     private volatile boolean gameRunning = false;
     private final int FPS = 100;
 
+    /**
+     * Khởi động luồng chính của trò chơi nếu chưa chạy.
+     */
     public void startGame() {
         if (gameThread == null || !gameThread.isAlive()) {
             gameRunning = true;
@@ -58,6 +64,9 @@ public class GamePanel extends JPanel implements KeyListener {
         }
     }
 
+    /**
+     * Vòng lặp chính của game, quản lý cập nhật logic và render theo FPS cố định.
+     */
     private void gameLoop() {
         long lastTime = System.nanoTime();
         double nsPerTick = 1_000_000_000.0 / FPS;
@@ -82,8 +91,16 @@ public class GamePanel extends JPanel implements KeyListener {
         }
     }
 
+    /**
+     * Dừng vòng lặp game và thoát luồng.
+     */
     public void stopGame() {
         gameRunning = false;
+        try {
+            if (gameThread != null) gameThread.join();
+        } catch (InterruptedException ignored) {
+            Thread.currentThread().interrupt();
+        }
     }
 
     public GamePanel() {
@@ -97,7 +114,6 @@ public class GamePanel extends JPanel implements KeyListener {
         PowerUpManager.setSinglePanel(this);
     }
 
-    // Constructor dùng cho Load Game
     /**
      * Constructor dùng để khởi tạo game từ dữ liệu đã lưu.
      * @param loadedData Đối tượng GameSaveData đã được tải.
@@ -179,7 +195,9 @@ public class GamePanel extends JPanel implements KeyListener {
                 MenuPanel.ballSize
         );
     }
-
+    /**
+     * Khởi tạo / reset game về mặc định.
+     */
     private void initGame() {
         level = 1;
         score = 0;
@@ -197,6 +215,9 @@ public class GamePanel extends JPanel implements KeyListener {
         collisionInfo = new CollisionInfo(ball, paddle, bricks);
     }
 
+    /**
+     * Cập nhật logic game và các object.
+     */
     public void update() {
         if (!gameOver) {
             if (leftPressed)
@@ -277,6 +298,10 @@ public class GamePanel extends JPanel implements KeyListener {
         updateLasers();  // Thêm
     }
 
+    /**
+     * Vẽ đồ họa game.
+     * @param g the <code>Graphics</code> object to protect
+     */
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -341,7 +366,10 @@ public class GamePanel extends JPanel implements KeyListener {
         }
     }
 
-    // KeyListener
+    /**
+     * Xử lí phím bấm.
+     * @param e the event to be processed
+     */
     @Override
     public void keyPressed(KeyEvent e) {
         int k = e.getKeyCode();
@@ -536,6 +564,7 @@ public class GamePanel extends JPanel implements KeyListener {
             }
         }
     }
+
     private void checkGameOver() {
         if (lives <= 0) {
             gameOver = true;
